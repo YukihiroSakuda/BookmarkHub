@@ -14,7 +14,7 @@ const notoSansJP = Noto_Sans_JP({
 });
 
 export const metadata: Metadata = {
-  title: "Bookmarks",
+  title: "BookmarkHub",
   description: "A modern bookmark manager",
 };
 
