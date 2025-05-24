@@ -90,9 +90,19 @@ export function BookmarkCard({
             rel="noopener noreferrer"
             className="flex-1 min-w-0 cursor-pointer"
           >
-            <h3 className="font-medium text-energy-green text-sm truncate mb-1">
-              {bookmark.title}
-            </h3>
+            <div className="flex items-center gap-2 mb-1">
+              <img
+                src={getFaviconUrl(bookmark.url)}
+                alt={`${bookmark.title} favicon`}
+                className="w-6 h-6 rounded-sm object-contain bg-dark-lighter/30 p-0.5"
+                onError={(e) => {
+                  e.currentTarget.src = '/default-favicon.png';
+                }}
+              />
+              <h3 className="font-medium text-energy-green text-sm truncate">
+                {bookmark.title}
+              </h3>
+            </div>
             <div className="flex flex-wrap gap-1.5 mt-2">
               {bookmark.tags.map((tag) => (
                 <Tag key={tag} tag={tag} isSelected={true} />

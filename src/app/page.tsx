@@ -11,7 +11,7 @@ import { TagManager } from '../components/TagManager';
 
 export default function Home() {
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
-  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>('grid');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingBookmark, setEditingBookmark] = useState<Bookmark | undefined>();
   const [searchQuery, setSearchQuery] = useState('');
