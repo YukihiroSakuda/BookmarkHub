@@ -36,7 +36,7 @@ export function BookmarkList({
       {/* Pinned Bookmarks */}
       {pinnedBookmarks.length > 0 && (
         <div className={viewMode === 'grid' 
-        ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-2"
+        ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"
         : "flex flex-col space-y-2"
         }>
         {renderBookmarks(pinnedBookmarks)}
@@ -52,7 +52,7 @@ export function BookmarkList({
       {unpinnedBookmarks.length > 0 && (
         <div>
           <div className={viewMode === 'grid' 
-            ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-2"
+            ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"
             : "flex flex-col space-y-2"
           }>
             {renderBookmarks(unpinnedBookmarks)}
@@ -62,7 +62,7 @@ export function BookmarkList({
 
       {pinnedBookmarks.length === 0 && unpinnedBookmarks.length === 0 && (
          <div className="text-center py-12 text-white/60">
-           <p>ブックマークが見つかりません。</p>
+           <p>No bookmarks found.</p>
          </div>
       )}
     </div>
