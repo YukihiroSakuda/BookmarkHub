@@ -67,7 +67,7 @@ export default function Home() {
 
   const handleDeleteBookmark = (id: string) => {
     const bookmarkToDelete = bookmarks.find(b => b.id === id);
-    if (bookmarkToDelete && window.confirm(`Are you sure you want to delete "${bookmarkToDelete.title}"?`)) {
+    if (bookmarkToDelete && window.confirm("Are you sure you want to delete this bookmark?")) {
       const updatedBookmarks = bookmarks.filter(bookmark => bookmark.id !== id);
       setBookmarks(updatedBookmarks);
       saveBookmarks(updatedBookmarks);
@@ -135,8 +135,6 @@ export default function Home() {
           setSelectedTags={setSelectedTags}
           onAddBookmark={() => setIsAddBookmarkOpen(true)}
           onClearAll={handleClearAll}
-          onAddBookmarkOpen={() => setIsAddBookmarkOpen(true)}
-          onManageTagsOpen={handleManageTagsOpen}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           availableTags={availableTags}

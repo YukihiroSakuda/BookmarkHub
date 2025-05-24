@@ -16,8 +16,6 @@ interface BookmarkHeaderProps {
   onTagClick: (tag: string) => void;
   onUpdateTags: (tags: string[]) => void;
   onClearAll: () => void;
-  onAddBookmarkOpen: () => void;
-  onManageTagsOpen: () => void;
 }
 
 export function BookmarkHeader({
@@ -32,14 +30,8 @@ export function BookmarkHeader({
   onTagClick,
   onUpdateTags,
   onClearAll,
-  onAddBookmarkOpen,
-  onManageTagsOpen,
 }: BookmarkHeaderProps) {
   const [isTagManagerOpen, setIsTagManagerOpen] = useState(false);
-
-  const clearAll = () => {
-    setSelectedTags([]);
-  };
 
   return (
     <>
@@ -89,7 +81,7 @@ export function BookmarkHeader({
             <div className="flex items-center gap-1.5">
               {selectedTags.length > 0 && (
                 <Button
-                  onClick={clearAll}
+                  onClick={onClearAll}
                   variant="ghost"
                   size="sm"
                   icon={X}
