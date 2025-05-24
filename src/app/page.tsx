@@ -109,11 +109,6 @@ export default function Home() {
     saveBookmarks(updatedBookmarks);
   };
 
-  const handleUpdateBookmark = (updatedBookmark: Bookmark) => {
-    setBookmarks(bookmarks.map(b => (b.id === updatedBookmark.id ? updatedBookmark : b)));
-    saveBookmarks(bookmarks.map(b => (b.id === updatedBookmark.id ? updatedBookmark : b)));
-  };
-
   const filteredBookmarks = bookmarks.filter(bookmark => {
     const searchLower = searchQuery.toLowerCase();
     const matchesSearch = 

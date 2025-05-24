@@ -15,9 +15,6 @@ interface BookmarkHeaderProps {
   availableTags: string[];
   onTagClick: (tag: string) => void;
   onUpdateTags: (tags: string[]) => void;
-  onClearAll: () => void;
-  onAddBookmarkOpen: () => void;
-  onManageTagsOpen: () => void;
 }
 
 export function BookmarkHeader({
@@ -31,9 +28,6 @@ export function BookmarkHeader({
   availableTags,
   onTagClick,
   onUpdateTags,
-  onClearAll,
-  onAddBookmarkOpen,
-  onManageTagsOpen,
 }: BookmarkHeaderProps) {
   const [isTagManagerOpen, setIsTagManagerOpen] = useState(false);
 
