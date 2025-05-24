@@ -24,50 +24,87 @@ export function BookmarkCard({
         ? 'flex items-center justify-between p-4' 
         : 'flex flex-col p-4'
     }`}>
-      <a
-        href={bookmark.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={`flex-1 min-w-0 ${viewMode === 'list' ? 'mr-4' : ''} cursor-pointer`}
-      >
-        <div>
-          <h3 className={`font-medium text-energy-green ${
-            viewMode === 'grid' 
-              ? 'text-sm truncate' 
-              : 'text-sm truncate mb-1'
-          }`}>{bookmark.title}</h3>
-          <div className={`flex flex-wrap gap-1.5 ${viewMode === 'grid' ? 'mt-2' : 'mt-1'}`}>
+      {viewMode === 'list' ? (
+        // List View Layout
+        <div className="flex items-center flex-1 min-w-0 gap-4">
+          <a
+            href={bookmark.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 min-w-0 overflow-hidden cursor-pointer"
+          >
+            <h3 className="font-medium text-energy-green text-sm truncate">
+              {bookmark.title}
+            </h3>
+          </a>
+          <div className="flex items-center flex-wrap gap-1.5 overflow-hidden">
             {bookmark.tags.map((tag) => (
               <Tag key={tag} tag={tag} isSelected={true} />
             ))}
           </div>
+          <div className="flex items-center justify-end space-x-2">
+            <Button
+              onClick={() => onTogglePin(bookmark.id)}
+              variant="secondary"
+              size="sm"
+              icon={Pin}
+              isActive={bookmark.isPinned}
+            />
+            <Button
+              onClick={() => onEdit(bookmark)}
+              variant="secondary"
+              size="sm"
+              icon={SquarePen}
+            />
+            <Button
+              onClick={() => onDelete(bookmark.id)}
+              variant="secondary"
+              size="sm"
+              icon={Trash2}
+            />
+          </div>
         </div>
-      </a>
-      <div className={`flex items-center justify-end space-x-2 ${
-        viewMode === 'list' 
-          ? '' 
-          : 'mt-3 pt-3 border-t border-energy-purple/20 bg-dark/30 -mx-4 -mb-4 px-4 py-3 rounded-b-xl'
-      }`}>
-        <Button
-          onClick={() => onTogglePin(bookmark.id)}
-          variant="secondary"
-          size="sm"
-          icon={Pin}
-          isActive={bookmark.isPinned}
-        />
-        <Button
-          onClick={() => onEdit(bookmark)}
-          variant="secondary"
-          size="sm"
-          icon={SquarePen}
-        />
-        <Button
-          onClick={() => onDelete(bookmark.id)}
-          variant="secondary"
-          size="sm"
-          icon={Trash2}
-        />
-      </div>
+      ) : (
+        // Grid View Layout
+        <>
+          <a
+            href={bookmark.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 min-w-0 cursor-pointer"
+          >
+            <h3 className="font-medium text-energy-green text-sm truncate mb-1">
+              {bookmark.title}
+            </h3>
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {bookmark.tags.map((tag) => (
+                <Tag key={tag} tag={tag} isSelected={true} />
+              ))}
+            </div>
+          </a>
+          <div className="flex items-center justify-end space-x-2 mt-3 pt-3 border-t border-energy-purple/20 bg-dark/30 -mx-4 -mb-4 px-4 py-3 rounded-b-xl">
+            <Button
+              onClick={() => onTogglePin(bookmark.id)}
+              variant="secondary"
+              size="sm"
+              icon={Pin}
+              isActive={bookmark.isPinned}
+            />
+            <Button
+              onClick={() => onEdit(bookmark)}
+              variant="secondary"
+              size="sm"
+              icon={SquarePen}
+            />
+            <Button
+              onClick={() => onDelete(bookmark.id)}
+              variant="secondary"
+              size="sm"
+              icon={Trash2}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 } 

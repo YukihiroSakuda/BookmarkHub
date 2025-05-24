@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { Bookmark } from '@/types/bookmark';
-import { XMarkIcon } from '@heroicons/react/24/outline';
 import { X } from 'lucide-react';
 
 interface BookmarkModalProps {

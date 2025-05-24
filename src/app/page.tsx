@@ -64,7 +64,9 @@ export default function Home() {
     ]);
     setAvailableTags(Array.from(uniqueTags).sort());
 
+    // モーダルを閉じる
     setIsFormOpen(false);
+    setIsAddBookmarkOpen(false);
   };
 
   const handleDeleteBookmark = (id: string) => {
