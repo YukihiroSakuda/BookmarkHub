@@ -1,10 +1,11 @@
-import { Grid, List, Plus, Search, Tag, X, Upload } from 'lucide-react';
+import { Grid, List, Plus, Search, Tag, X, Upload, Download } from 'lucide-react';
 import { useState } from 'react';
 import { TagManager } from './TagManager';
 import { Tag as TagComponent } from './Tag';
 import { Button } from './Button';
 import { useImportBookmarks } from './ImportBookmarks';
 import { Bookmark } from '@/types/bookmark';
+import { exportBookmarksToHtml, downloadHtml } from '@/utils/export';
 
 interface BookmarkHeaderProps {
   viewMode: 'list' | 'grid';
@@ -18,6 +19,7 @@ interface BookmarkHeaderProps {
   onUpdateTags: (tags: string[]) => void;
   onClearAll: () => void;
   onBookmarksUpdate: (bookmarks: Bookmark[]) => void;
+  bookmarks: Bookmark[];
 }
 
 export function BookmarkHeader({
@@ -32,6 +34,7 @@ export function BookmarkHeader({
   onUpdateTags,
   onClearAll,
   onBookmarksUpdate,
+  bookmarks,
 }: BookmarkHeaderProps) {
   const [isTagManagerOpen, setIsTagManagerOpen] = useState(false);
   const { isImporting, handleFileUpload } = useImportBookmarks({
@@ -56,6 +59,11 @@ export function BookmarkHeader({
       }
     };
     input.click();
+  };
+
+  const handleExportClick = () => {
+    const html = exportBookmarksToHtml(bookmarks);
+    downloadHtml(html);
   };
 
   return (
@@ -91,6 +99,15 @@ export function BookmarkHeader({
               title="Import bookmarks from browser's HTML file"
             >
               {isImporting ? 'Importing...' : 'Import from HTML'}
+            </Button>
+            <Button
+              onClick={handleExportClick}
+              variant="secondary"
+              size="lg"
+              icon={Download}
+              title="Export bookmarks to HTML file"
+            >
+              Export to HTML
             </Button>
             <Button
               onClick={onAddBookmark}

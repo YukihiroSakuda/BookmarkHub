@@ -126,6 +126,7 @@ export default function Home() {
           onUpdateTags={handleUpdateTags}
           onClearAll={() => setSelectedTags([])}
           onBookmarksUpdate={handleBookmarksUpdate}
+          bookmarks={bookmarks}
         />
 
         <BookmarkList
