@@ -1,7 +1,8 @@
 import { Bookmark } from '@/types/bookmark';
-import { Pin, SquarePen, Trash2 } from 'lucide-react';
+import { Pin, SquarePen, Trash2, Globe } from 'lucide-react';
 import { Tag } from './Tag';
 import { Button } from './Button';
+import { useState } from 'react';
 
 interface BookmarkCardProps {
   bookmark: Bookmark;
@@ -18,13 +19,34 @@ export function BookmarkCard({
   onEdit, 
   onDelete 
 }: BookmarkCardProps) {
+  const [showFallback, setShowFallback] = useState(false);
+
   const getFaviconUrl = (url: string) => {
     try {
       const hostname = new URL(url).hostname;
       return `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
     } catch {
-      return '/default-favicon.png';
+      return '';
     }
+  };
+
+  const FaviconDisplay = () => {
+    if (showFallback) {
+      return (
+        <div className="w-6 h-6 rounded-sm bg-dark-lighter/30 flex items-center justify-center">
+          <Globe className="w-4 h-4 text-energy-purple" />
+        </div>
+      );
+    }
+
+    return (
+      <img
+        src={getFaviconUrl(bookmark.url)}
+        alt={`${bookmark.title} favicon`}
+        className="w-6 h-6 rounded-sm object-contain bg-dark-lighter/30 p-0.5"
+        onError={() => setShowFallback(true)}
+      />
+    );
   };
 
   return (
@@ -36,14 +58,7 @@ export function BookmarkCard({
       {viewMode === 'list' ? (
         // List View Layout
         <div className="flex items-center flex-1 min-w-0 gap-4">
-          <img
-            src={getFaviconUrl(bookmark.url)}
-            alt={`${bookmark.title} favicon`}
-            className="w-6 h-6 rounded-sm object-contain bg-dark-lighter/30 p-0.5"
-            onError={(e) => {
-              e.currentTarget.src = '/default-favicon.png';
-            }}
-          />
+          <FaviconDisplay />
           <a
             href={bookmark.url}
             target="_blank"
@@ -91,14 +106,7 @@ export function BookmarkCard({
             className="flex-1 min-w-0 cursor-pointer"
           >
             <div className="flex items-center gap-2 mb-1">
-              <img
-                src={getFaviconUrl(bookmark.url)}
-                alt={`${bookmark.title} favicon`}
-                className="w-6 h-6 rounded-sm object-contain bg-dark-lighter/30 p-0.5"
-                onError={(e) => {
-                  e.currentTarget.src = '/default-favicon.png';
-                }}
-              />
+              <FaviconDisplay />
               <h3 className="font-medium text-energy-green text-sm truncate">
                 {bookmark.title}
               </h3>

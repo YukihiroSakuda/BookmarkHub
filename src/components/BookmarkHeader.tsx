@@ -1,8 +1,10 @@
-import { Grid, List, Plus, Search, Tag, X } from 'lucide-react';
+import { Grid, List, Plus, Search, Tag, X, Upload } from 'lucide-react';
 import { useState } from 'react';
 import { TagManager } from './TagManager';
 import { Tag as TagComponent } from './Tag';
 import { Button } from './Button';
+import { useImportBookmarks } from './ImportBookmarks';
+import { Bookmark } from '@/types/bookmark';
 
 interface BookmarkHeaderProps {
   viewMode: 'list' | 'grid';
@@ -15,6 +17,7 @@ interface BookmarkHeaderProps {
   onTagClick: (tag: string) => void;
   onUpdateTags: (tags: string[]) => void;
   onClearAll: () => void;
+  onBookmarksUpdate: (bookmarks: Bookmark[]) => void;
 }
 
 export function BookmarkHeader({
@@ -28,8 +31,32 @@ export function BookmarkHeader({
   onTagClick,
   onUpdateTags,
   onClearAll,
+  onBookmarksUpdate,
 }: BookmarkHeaderProps) {
   const [isTagManagerOpen, setIsTagManagerOpen] = useState(false);
+  const { isImporting, handleFileUpload } = useImportBookmarks({
+    onImportComplete: (count) => {
+      alert(`${count} bookmarks imported successfully!`);
+    },
+    onBookmarksUpdate
+  });
+
+  const handleImportClick = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.html';
+    input.onchange = (e: Event) => {
+      const target = e.target as HTMLInputElement;
+      if (target.files) {
+        handleFileUpload({
+          target: {
+            files: target.files
+          }
+        } as React.ChangeEvent<HTMLInputElement>);
+      }
+    };
+    input.click();
+  };
 
   return (
     <>
@@ -37,7 +64,7 @@ export function BookmarkHeader({
         <h1 className="text-4xl font-bold bg-gradient-energy bg-clip-text text-transparent animate-gradient-x tracking-tight">
           BookmarkHub
         </h1>
-        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 w-full md:w-auto max-w-lg">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 w-full md:w-auto max-w-4xl">
           <div className="relative flex-1">
             <input
               type="text"
@@ -52,9 +79,19 @@ export function BookmarkHeader({
             <Button
               onClick={() => onViewModeChange(viewMode === 'grid' ? 'list' : 'grid')}
               variant="secondary"
-              size="md"
+              size="lg"
               icon={viewMode === 'grid' ? List : Grid}
             />
+            <Button
+              onClick={handleImportClick}
+              variant="secondary"
+              size="lg"
+              icon={Upload}
+              disabled={isImporting}
+              title="Import bookmarks from browser's HTML file"
+            >
+              {isImporting ? 'Importing...' : 'Import from HTML'}
+            </Button>
             <Button
               onClick={onAddBookmark}
               variant="primary"
