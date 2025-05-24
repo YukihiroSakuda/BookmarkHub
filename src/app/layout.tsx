@@ -14,8 +14,8 @@ const notoSansJP = Noto_Sans_JP({
 });
 
 export const metadata: Metadata = {
-  title: "BookmarkHub",
-  description: "A modern bookmark manager",
+  title: "BookmarkHub - Your Cool Bookmark Manager",
+  description: "Keep your favorite links organized in style",
 };
 
 export default function RootLayout({

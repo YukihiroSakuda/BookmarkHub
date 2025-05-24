@@ -1,4 +1,3 @@
-import { Bookmark } from '@/types/bookmark';
 import { Grid, List, Plus, Search, Tag, X } from 'lucide-react';
 import { useState } from 'react';
 import { TagManager } from './TagManager';
@@ -11,14 +10,14 @@ interface BookmarkHeaderProps {
   selectedTags: string[];
   setSelectedTags: (tags: string[]) => void;
   onAddBookmark: () => void;
-  onTagManagerOpen: () => void;
-  pinnedCount: number;
-  totalCount: number;
   searchQuery: string;
   onSearchChange: (query: string) => void;
   availableTags: string[];
   onTagClick: (tag: string) => void;
   onUpdateTags: (tags: string[]) => void;
+  onClearAll: () => void;
+  onAddBookmarkOpen: () => void;
+  onManageTagsOpen: () => void;
 }
 
 export function BookmarkHeader({
@@ -27,14 +26,14 @@ export function BookmarkHeader({
   selectedTags,
   setSelectedTags,
   onAddBookmark,
-  onTagManagerOpen,
-  pinnedCount,
-  totalCount,
   searchQuery,
   onSearchChange,
   availableTags,
   onTagClick,
   onUpdateTags,
+  onClearAll,
+  onAddBookmarkOpen,
+  onManageTagsOpen,
 }: BookmarkHeaderProps) {
   const [isTagManagerOpen, setIsTagManagerOpen] = useState(false);
 
@@ -50,7 +49,7 @@ export function BookmarkHeader({
           <div className="relative flex-1">
             <input
               type="text"
-              placeholder="Search bookmarks..."
+              placeholder="Find your bookmarks..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
               className="w-full px-3 py-2 pl-8 rounded-xl border border-energy-purple/30 bg-dark-lighter/50 backdrop-blur-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-energy-green/50 focus:border-transparent text-base transition-all duration-300"
@@ -70,7 +69,7 @@ export function BookmarkHeader({
               size="lg"
               icon={Plus}
             >
-              Add New
+              Add New Bookmark
             </Button>
           </div>
         </div>
@@ -95,7 +94,7 @@ export function BookmarkHeader({
                   size="sm"
                   icon={X}
                 >
-                  Clear all
+                  Clear all tags
                 </Button>
               )}
               <Button
@@ -104,7 +103,7 @@ export function BookmarkHeader({
                 size="sm"
                 icon={Tag}
               >
-                Manage Tags
+                Edit Tags
               </Button>
             </div>
           </div>

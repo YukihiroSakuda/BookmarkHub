@@ -23,7 +23,7 @@ export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerP
   };
 
   const handleRemoveTag = (tagToRemove: string) => {
-    if (window.confirm(`タグ "${tagToRemove}" を削除してもよろしいですか？`)) {
+    if (window.confirm(`Are you sure you want to delete the tag "${tagToRemove}"?`)) {
       setTags(tags.filter(tag => tag !== tagToRemove));
     }
   };
@@ -56,7 +56,7 @@ export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerP
       <div className="bg-dark-lighter/50 backdrop-blur-sm rounded-2xl border border-energy-purple/30 shadow-lg p-6 w-full max-w-lg max-h-[90vh] flex flex-col">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold bg-gradient-energy bg-clip-text text-transparent">
-            Manage Tags
+            Edit Your Tags
           </h2>
           <Button
             onClick={onClose}
@@ -72,7 +72,7 @@ export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerP
               <Input
                 value={newTag}
                 onChange={(e) => setNewTag(e.target.value)}
-                placeholder="Add new tag"
+                placeholder="Create a new tag"
               />
               <Button
                 type="button"
@@ -80,12 +80,12 @@ export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerP
                 variant="secondary"
                 size="md"
               >
-                Add
+                Create
               </Button>
             </div>
 
             <label className="block text-sm font-medium text-white/90 mb-1">
-              Tags
+              Your Tags
             </label>
             <div className="space-y-2">
               {tags.map((tag) => (

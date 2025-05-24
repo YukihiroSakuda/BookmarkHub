@@ -7,10 +7,11 @@ import { BookmarkList } from '@/components/BookmarkList';
 import { useState, useEffect } from 'react';
 import { getBookmarks, saveBookmarks } from '@/utils/storage';
 import { Button } from '@/components/Button';
+import { TagManager } from '../components/TagManager';
 
 export default function Home() {
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
-  const [viewMode, setViewMode] = useState<'list' | 'grid'>('grid');
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingBookmark, setEditingBookmark] = useState<Bookmark | undefined>();
   const [searchQuery, setSearchQuery] = useState('');
@@ -30,11 +31,6 @@ export default function Home() {
     ]);
     setAvailableTags(Array.from(uniqueTags).sort());
   }, []);
-
-  const handleAddBookmark = () => {
-    setEditingBookmark(undefined);
-    setIsFormOpen(true);
-  };
 
   const handleEditBookmark = (bookmark: Bookmark) => {
     setEditingBookmark(bookmark);
@@ -70,17 +66,11 @@ export default function Home() {
   };
 
   const handleDeleteBookmark = (id: string) => {
-    if (window.confirm('このブックマークを削除してもよろしいですか？')) {
-      const updatedBookmarks = bookmarks.filter(b => b.id !== id);
+    const bookmarkToDelete = bookmarks.find(b => b.id === id);
+    if (bookmarkToDelete && window.confirm(`Are you sure you want to delete "${bookmarkToDelete.title}"?`)) {
+      const updatedBookmarks = bookmarks.filter(bookmark => bookmark.id !== id);
       setBookmarks(updatedBookmarks);
       saveBookmarks(updatedBookmarks);
-
-      // タグの更新
-      const uniqueTags = new Set<string>([
-        ...DEFAULT_TAGS,
-        ...updatedBookmarks.flatMap(bookmark => bookmark.tags)
-      ]);
-      setAvailableTags(Array.from(uniqueTags).sort());
     }
   };
 
@@ -100,6 +90,14 @@ export default function Home() {
     );
   };
 
+  const handleClearAll = () => {
+    setSelectedTags([]);
+  };
+
+  const handleManageTagsOpen = () => {
+    setIsTagManagerOpen(true);
+  };
+
   const handleUpdateTags = (newTags: string[]) => {
     setAvailableTags(newTags);
     // ブックマークのタグを更新
@@ -109,6 +107,11 @@ export default function Home() {
     }));
     setBookmarks(updatedBookmarks);
     saveBookmarks(updatedBookmarks);
+  };
+
+  const handleUpdateBookmark = (updatedBookmark: Bookmark) => {
+    setBookmarks(bookmarks.map(b => (b.id === updatedBookmark.id ? updatedBookmark : b)));
+    saveBookmarks(bookmarks.map(b => (b.id === updatedBookmark.id ? updatedBookmark : b)));
   };
 
   const filteredBookmarks = bookmarks.filter(bookmark => {
@@ -136,9 +139,9 @@ export default function Home() {
           selectedTags={selectedTags}
           setSelectedTags={setSelectedTags}
           onAddBookmark={() => setIsAddBookmarkOpen(true)}
-          onTagManagerOpen={() => setIsTagManagerOpen(true)}
-          pinnedCount={pinnedBookmarks.length}
-          totalCount={bookmarks.length}
+          onClearAll={handleClearAll}
+          onAddBookmarkOpen={() => setIsAddBookmarkOpen(true)}
+          onManageTagsOpen={handleManageTagsOpen}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           availableTags={availableTags}
@@ -160,7 +163,7 @@ export default function Home() {
           /* ブックマークが検索条件に一致しない場合 */
           bookmarks.length > 0 && (
             <div className="text-center py-12 text-white/60">
-              <p>一致するブックマークが見つかりません。</p>
+              <p>No bookmarks match your search. Try different keywords or tags!</p>
             </div>
           )
         )}
@@ -168,14 +171,14 @@ export default function Home() {
         {/* ブックマークが空の場合 */}
         {bookmarks.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-white/60">ブックマークがありません</p>
+            <p className="text-white/60">Let's add your first bookmark!</p>
             <Button
               onClick={() => setIsAddBookmarkOpen(true)}
               variant="primary"
               size="lg"
               className="mt-4"
             >
-              最初のブックマークを追加
+              Add your first bookmark
             </Button>
           </div>
         )}
@@ -196,6 +199,14 @@ export default function Home() {
             onClose={() => setIsFormOpen(false)}
             onSave={handleSaveBookmark}
             availableTags={availableTags}
+          />
+        )}
+
+        {isTagManagerOpen && (
+          <TagManager
+            availableTags={availableTags}
+            onClose={() => setIsTagManagerOpen(false)}
+            onUpdateTags={handleUpdateTags}
           />
         )}
       </div>

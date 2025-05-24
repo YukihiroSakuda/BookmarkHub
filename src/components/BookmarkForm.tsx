@@ -42,7 +42,7 @@ export function BookmarkForm({ bookmark, onClose, onSave, availableTags }: Bookm
       <div className="bg-dark-lighter/50 backdrop-blur-sm rounded-2xl border border-energy-purple/30 shadow-lg p-6 w-full max-w-lg">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold bg-gradient-energy bg-clip-text text-transparent">
-            {bookmark ? 'Edit Bookmark' : 'Add New Bookmark'}
+            {bookmark ? 'Edit Your Bookmark' : 'Add New Bookmark'}
           </h2>
           <Button
             onClick={onClose}
