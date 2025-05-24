@@ -1,36 +1,103 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bookmarks
 
-## Getting Started
+モダンなUIと使いやすい機能を備えたブックマーク管理アプリケーション。
 
-First, run the development server:
+## 機能一覧
 
+### ブックマーク管理
+- ブックマークの追加・編集・削除
+- タイトル、URL、タグの管理
+- ピン留め機能
+- リスト表示とグリッド表示の切り替え
+
+### タグ管理
+- タグの追加・編集・削除
+- タグ別表示
+- タグによるフィルタリング
+
+### 検索機能
+- タイトル、URL、タグによる検索
+- リアルタイム検索
+
+### UI/UX
+- モダンなデザイン
+- レスポンシブ対応
+- アニメーション効果
+- ダークモード
+
+## 技術スタック
+
+- **フレームワーク**: Next.js 14
+- **言語**: TypeScript
+- **スタイリング**: Tailwind CSS
+- **アイコン**: Lucide Icons
+- **状態管理**: React Hooks
+- **ストレージ**: LocalStorage
+
+## セットアップ手順
+
+1. リポジトリのクローン
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/YukihiroSakuda/BookmarkHub.git
+cd BookmarkHub
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. 依存関係のインストール
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. 開発サーバーの起動
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. ブラウザで確認
+```
+http://localhost:3000
+```
 
-## Learn More
+## 開発ガイドライン
 
-To learn more about Next.js, take a look at the following resources:
+### プロジェクト構造
+```
+src/
+  ├── app/              # アプリケーションのルート
+  ├── components/       # 共通コンポーネント
+  ├── types/           # 型定義
+  └── utils/           # ユーティリティ関数
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### コンポーネント設計
+- 各コンポーネントは単一責任の原則に従う
+- Propsの型定義を必ず行う
+- 再利用可能なコンポーネントは`components`ディレクトリに配置
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### スタイリング
+- Tailwind CSSを使用
+- カスタムカラーは`tailwind.config.ts`で定義
+- コンポーネント固有のスタイルは該当コンポーネント内で定義
 
-## Deploy on Vercel
+### 状態管理
+- ローカルステートは`useState`を使用
+- グローバルステートは必要に応じて`Context`を使用
+- データの永続化は`LocalStorage`を使用
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 命名規則
+- コンポーネント: PascalCase
+- 関数・変数: camelCase
+- 定数: UPPER_SNAKE_CASE
+- ファイル名: コンポーネントと同じ名前（PascalCase）
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### コミットメッセージ
+- feat: 新機能
+- fix: バグ修正
+- docs: ドキュメント
+- style: スタイル
+- refactor: リファクタリング
+- test: テスト
+- chore: その他
+
+## ライセンス
+
+MIT License
