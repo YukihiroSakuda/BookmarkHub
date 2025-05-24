@@ -18,6 +18,15 @@ export function BookmarkCard({
   onEdit, 
   onDelete 
 }: BookmarkCardProps) {
+  const getFaviconUrl = (url: string) => {
+    try {
+      const hostname = new URL(url).hostname;
+      return `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
+    } catch {
+      return '/default-favicon.png';
+    }
+  };
+
   return (
     <div className={`bg-dark-lighter/50 backdrop-blur-sm rounded-xl border border-energy-purple/30 shadow-lg hover:shadow-neon transition-all duration-300 ${
       viewMode === 'list' 
@@ -27,6 +36,14 @@ export function BookmarkCard({
       {viewMode === 'list' ? (
         // List View Layout
         <div className="flex items-center flex-1 min-w-0 gap-4">
+          <img
+            src={getFaviconUrl(bookmark.url)}
+            alt={`${bookmark.title} favicon`}
+            className="w-6 h-6 rounded-sm object-contain bg-dark-lighter/30 p-0.5"
+            onError={(e) => {
+              e.currentTarget.src = '/default-favicon.png';
+            }}
+          />
           <a
             href={bookmark.url}
             target="_blank"

@@ -6,6 +6,7 @@ export interface Bookmark {
   isPinned: boolean;
   createdAt: string;
   updatedAt: string;
+  favicon?: string;
 }
 
 export interface Settings {
