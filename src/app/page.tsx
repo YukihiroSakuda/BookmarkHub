@@ -159,7 +159,7 @@ export default function Home() {
         {/* ブックマークが空の場合 */}
         {bookmarks.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-white/60">Let's add your first bookmark!</p>
+            <p className="text-white/60">Let&apos;s add your first bookmark!</p>
             <Button
               onClick={() => setIsAddBookmarkOpen(true)}
               variant="primary"
