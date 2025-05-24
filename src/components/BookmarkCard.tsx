@@ -20,8 +20,6 @@ export function BookmarkCard({
   onEdit, 
   onDelete 
 }: BookmarkCardProps) {
-  const [showFallback, setShowFallback] = useState(false);
-
   const getFaviconUrl = (url: string) => {
     try {
       const urlObj = new URL(url);
