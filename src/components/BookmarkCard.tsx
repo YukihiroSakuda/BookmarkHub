@@ -3,6 +3,7 @@ import { Pin, SquarePen, Trash2, Globe } from 'lucide-react';
 import { Tag } from './Tag';
 import { Button } from './Button';
 import { useState } from 'react';
+import Image from 'next/image';
 
 interface BookmarkCardProps {
   bookmark: Bookmark;
@@ -23,31 +24,41 @@ export function BookmarkCard({
 
   const getFaviconUrl = (url: string) => {
     try {
-      const hostname = new URL(url).hostname;
-      return `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
+      const urlObj = new URL(url);
+      // 内部ネットワークのURLや特殊なドメインの場合は空文字を返す
+      if (urlObj.hostname.includes('.kmt.') || 
+          urlObj.hostname.includes('.komatsu.') ||
+          urlObj.hostname.match(/^\d+\.\d+\.\d+\.\d+$/) ||
+          urlObj.hostname.includes('.local') ||
+          urlObj.hostname.includes('.internal')) {
+        return '';
+      }
+      return `https://www.google.com/s2/favicons?domain=${urlObj.hostname}&sz=32`;
     } catch {
       return '';
     }
   };
 
-  const FaviconDisplay = () => {
-    if (showFallback) {
-      return (
-        <div className="w-6 h-6 rounded-sm bg-dark-lighter/30 flex items-center justify-center">
-          <Globe className="w-4 h-4 text-energy-purple" />
-        </div>
-      );
+  function FaviconDisplay({ url }: { url: string }) {
+    const [showFallback, setShowFallback] = useState(false);
+
+    if (!url || showFallback) {
+      return <Globe className="w-4 h-4 text-energy-purple/70" />;
     }
 
     return (
-      <img
-        src={getFaviconUrl(bookmark.url)}
-        alt={`${bookmark.title} favicon`}
-        className="w-6 h-6 rounded-sm object-contain bg-dark-lighter/30 p-0.5"
-        onError={() => setShowFallback(true)}
-      />
+      <div className="relative w-4 h-4">
+        <Image
+          src={url}
+          alt=""
+          width={16}
+          height={16}
+          className="rounded-sm"
+          onError={() => setShowFallback(true)}
+        />
+      </div>
     );
-  };
+  }
 
   return (
     <div className={`bg-dark-lighter/50 backdrop-blur-sm rounded-xl border border-energy-purple/30 shadow-lg hover:shadow-neon transition-all duration-300 ${
@@ -58,7 +69,7 @@ export function BookmarkCard({
       {viewMode === 'list' ? (
         // List View Layout
         <div className="flex items-center flex-1 min-w-0 gap-4">
-          <FaviconDisplay />
+          <FaviconDisplay url={getFaviconUrl(bookmark.url)} />
           <a
             href={bookmark.url}
             target="_blank"
@@ -106,7 +117,7 @@ export function BookmarkCard({
             className="flex-1 min-w-0 cursor-pointer"
           >
             <div className="flex items-center gap-2 mb-1">
-              <FaviconDisplay />
+              <FaviconDisplay url={getFaviconUrl(bookmark.url)} />
               <h3 className="font-medium text-energy-green text-sm truncate">
                 {bookmark.title}
               </h3>

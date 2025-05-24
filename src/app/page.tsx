@@ -16,7 +16,7 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
-  const { isImporting, handleFileUpload } = useImportBookmarks({
+  const { onImportComplete } = useImportBookmarks({
     onImportComplete: () => {
       // インポート完了時にブックマークリストを更新
       const updatedBookmarks = getBookmarks();

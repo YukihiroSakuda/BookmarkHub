@@ -70,6 +70,7 @@ export function useImportBookmarks({
   return {
     isImporting,
     importedCount,
-    handleFileUpload
+    handleFileUpload,
+    onImportComplete
   };
 } 
