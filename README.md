@@ -1,4 +1,4 @@
-# Bookmarks
+# BookmarkHub
 
 モダンなUIと使いやすい機能を備えたブックマーク管理アプリケーション。
 
