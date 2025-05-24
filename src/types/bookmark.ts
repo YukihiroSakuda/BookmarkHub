@@ -1,7 +1,7 @@
 export interface Bookmark {
   id: string;
-  url: string;
   title: string;
+  url: string;
   tags: string[];
   isPinned: boolean;
   createdAt: string;
@@ -16,16 +16,14 @@ export interface Settings {
 }
 
 export const DEFAULT_TAGS = [
-  '仕事',
-  '学習',
-  '趣味',
-  'ニュース',
-  '参考資料',
+  '技術',
+  'ブログ',
+  'ドキュメント',
   'ツール',
-  'よく使う',
-  '後で見る',
-  'ショッピング',
-  'エンターテイメント',
-  'SNS',
-  '技術・IT',
-] as const; 
+  'ニュース',
+  'チュートリアル',
+  '参考',
+  '重要',
+  '後で読む',
+  'お気に入り'
+]; 

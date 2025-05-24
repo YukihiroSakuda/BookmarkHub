@@ -1,0 +1,70 @@
+import { Bookmark } from '@/types/bookmark';
+import { BookmarkCard } from './BookmarkCard';
+
+interface BookmarkListProps {
+  pinnedBookmarks: Bookmark[];
+  unpinnedBookmarks: Bookmark[];
+  viewMode: 'list' | 'grid';
+  onTogglePin: (id: string) => void;
+  onEdit: (bookmark: Bookmark) => void;
+  onDelete: (id: string) => void;
+}
+
+export function BookmarkList({
+  pinnedBookmarks,
+  unpinnedBookmarks,
+  viewMode,
+  onTogglePin,
+  onEdit,
+  onDelete,
+}: BookmarkListProps) {
+  const renderBookmarks = (bookmarks: Bookmark[]) => (
+    bookmarks.map((bookmark) => (
+      <BookmarkCard
+        key={bookmark.id}
+        bookmark={bookmark}
+        viewMode={viewMode}
+        onTogglePin={onTogglePin}
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />
+    ))
+  );
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Pinned Bookmarks */}
+      {pinnedBookmarks.length > 0 && (
+        <div className={viewMode === 'grid' 
+        ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-2"
+        : "flex flex-col space-y-2"
+        }>
+        {renderBookmarks(pinnedBookmarks)}
+        </div>
+      )}
+
+      {/* Separator */}
+      {pinnedBookmarks.length > 0 && unpinnedBookmarks.length > 0 && (
+        <div className="border-t border-energy-purple/20 my-1"></div>
+      )}
+
+      {/* Unpinned Bookmarks */}
+      {unpinnedBookmarks.length > 0 && (
+        <div>
+          <div className={viewMode === 'grid' 
+            ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-2"
+            : "flex flex-col space-y-2"
+          }>
+            {renderBookmarks(unpinnedBookmarks)}
+          </div>
+        </div>
+      )}
+
+      {pinnedBookmarks.length === 0 && unpinnedBookmarks.length === 0 && (
+         <div className="text-center py-12 text-white/60">
+           <p>ブックマークが見つかりません。</p>
+         </div>
+      )}
+    </div>
+  );
+} 

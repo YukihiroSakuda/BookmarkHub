@@ -26,7 +26,7 @@ export default {
         },
         'energy': {
           purple: '#B026FF',
-          green: '#00FF9D',
+          green: '#00E68C',
           pink: '#FF2E63',
         }
       },
