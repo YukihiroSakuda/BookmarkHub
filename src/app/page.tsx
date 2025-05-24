@@ -94,10 +94,6 @@ export default function Home() {
     setSelectedTags([]);
   };
 
-  const handleManageTagsOpen = () => {
-    setIsTagManagerOpen(true);
-  };
-
   const handleUpdateTags = (newTags: string[]) => {
     setAvailableTags(newTags);
     // ブックマークのタグを更新
@@ -132,7 +128,6 @@ export default function Home() {
           viewMode={viewMode}
           onViewModeChange={setViewMode}
           selectedTags={selectedTags}
-          setSelectedTags={setSelectedTags}
           onAddBookmark={() => setIsAddBookmarkOpen(true)}
           onClearAll={handleClearAll}
           searchQuery={searchQuery}

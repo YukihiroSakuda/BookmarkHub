@@ -8,7 +8,6 @@ interface BookmarkHeaderProps {
   viewMode: 'list' | 'grid';
   onViewModeChange: (mode: 'list' | 'grid') => void;
   selectedTags: string[];
-  setSelectedTags: (tags: string[]) => void;
   onAddBookmark: () => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
@@ -22,7 +21,6 @@ export function BookmarkHeader({
   viewMode,
   onViewModeChange,
   selectedTags,
-  setSelectedTags,
   onAddBookmark,
   searchQuery,
   onSearchChange,
