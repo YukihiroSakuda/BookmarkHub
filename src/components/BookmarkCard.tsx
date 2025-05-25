@@ -15,7 +15,6 @@ interface BookmarkCardProps {
   onEdit: (bookmark: Bookmark) => void;
   onDelete: (id: string) => void;
   onClick: () => void;
-  onTagClick: (tag: string) => void;
 }
 
 export function BookmarkCard({ 
@@ -24,8 +23,7 @@ export function BookmarkCard({
   onTogglePin, 
   onEdit, 
   onDelete,
-  onClick,
-  onTagClick
+  onClick
 }: BookmarkCardProps) {
   const getFaviconUrl = (url: string) => {
     try {

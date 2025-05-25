@@ -32,7 +32,6 @@ export function BookmarkList({
         onEdit={onEdit}
         onDelete={onDelete}
         onClick={() => onBookmarkClick(bookmark)}
-        onTagClick={onTagClick}
       />
     ))
   );
