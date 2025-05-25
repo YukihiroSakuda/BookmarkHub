@@ -30,6 +30,7 @@ export async function POST(request: Request) {
       isPinned: false,
       createdAt: link.getAttribute('add_date') || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      accessCount: 0,
       favicon: undefined
     }));
 
