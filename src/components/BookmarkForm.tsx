@@ -1,5 +1,5 @@
 import { Bookmark } from '@/types/bookmark';
-import { X } from 'lucide-react';
+import { X, Clock, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from './Button';
 import { Tag } from './Tag';
@@ -26,6 +26,8 @@ export function BookmarkForm({ bookmark, onClose, onSave, availableTags }: Bookm
       isPinned: bookmark?.isPinned || false,
       createdAt: bookmark?.createdAt || new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      accessCount: bookmark?.accessCount || 0,
+      lastAccessedAt: bookmark?.lastAccessedAt,
     });
   };
 
@@ -35,6 +37,17 @@ export function BookmarkForm({ bookmark, onClose, onSave, availableTags }: Bookm
         ? prev.filter(t => t !== tag)
         : [...prev, tag]
     );
+  };
+
+  const formatDate = (dateString: string | undefined) => {
+    if (!dateString) return 'Never';
+    return new Date(dateString).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   };
 
   return (
@@ -85,6 +98,25 @@ export function BookmarkForm({ bookmark, onClose, onSave, availableTags }: Bookm
               ))}
             </div>
           </div>
+
+          {bookmark && (
+            <div className="space-y-2 pt-2 border-t border-energy-purple/20">
+              <div className="flex items-center gap-2 text-sm text-white/70">
+                <TrendingUp size={16} />
+                <span>Access Count: {bookmark.accessCount || 0}</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-white/70">
+                <Clock size={16} />
+                <span>Created: {formatDate(bookmark.createdAt)}</span>
+              </div>
+              {bookmark.lastAccessedAt && (
+                <div className="flex items-center gap-2 text-sm text-white/70">
+                  <Clock size={16} />
+                  <span>Last Accessed: {formatDate(bookmark.lastAccessedAt)}</span>
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="flex justify-end gap-2 mt-6">
             <Button

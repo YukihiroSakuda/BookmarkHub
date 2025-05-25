@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react';
 import { BookmarkList } from '@/components/BookmarkList';
 import { BookmarkHeader } from '@/components/BookmarkHeader';
 import { getBookmarks, saveBookmarks } from '@/utils/storage';
-import { Bookmark } from '@/types/bookmark';
+import { Bookmark, SortOption, SortOrder, DEFAULT_TAGS } from '@/types/bookmark';
 import { useImportBookmarks } from '@/components/ImportBookmarks';
 import { BookmarkForm } from '@/components/BookmarkForm';
+import { SortControls } from '@/components/SortControls';
 
 export default function Home() {
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
@@ -15,7 +16,9 @@ export default function Home() {
   const [selectedBookmark, setSelectedBookmark] = useState<Bookmark | undefined>(undefined);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [availableTags, setAvailableTags] = useState<string[]>([]);
+  const [availableTags, setAvailableTags] = useState<string[]>(DEFAULT_TAGS);
+  const [currentSort, setCurrentSort] = useState<SortOption>('accessCount');
+  const [currentOrder, setCurrentOrder] = useState<SortOrder>('desc');
   useImportBookmarks({
     onImportComplete: () => {
       // インポート完了時にブックマークリストを更新
@@ -99,15 +102,50 @@ export default function Home() {
     setAvailableTags(tags);
   };
 
+  const handleBookmarkClick = (bookmark: Bookmark) => {
+    const updatedBookmarks = bookmarks.map(b => {
+      if (b.id === bookmark.id) {
+        return {
+          ...b,
+          accessCount: (b.accessCount || 0) + 1,
+          lastAccessedAt: new Date().toISOString()
+        };
+      }
+      return b;
+    });
+    saveBookmarks(updatedBookmarks);
+    handleBookmarksUpdate(updatedBookmarks);
+    window.open(bookmark.url, '_blank');
+  };
+
+  const sortBookmarks = (bookmarks: Bookmark[]) => {
+    return [...bookmarks].sort((a, b) => {
+      let comparison = 0;
+      switch (currentSort) {
+        case 'accessCount':
+          comparison = (a.accessCount || 0) - (b.accessCount || 0);
+          break;
+        case 'title':
+          comparison = a.title.localeCompare(b.title);
+          break;
+        case 'createdAt':
+          comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          break;
+      }
+      return currentOrder === 'asc' ? comparison : -comparison;
+    });
+  };
+
   const filteredBookmarks = bookmarks.filter(bookmark => {
     const matchesSearch = bookmark.title.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesTags = selectedTags.length === 0 ||
-                       selectedTags.every(tag => bookmark.tags.includes(tag));
+                       selectedTags.some(tag => bookmark.tags.includes(tag));
     return matchesSearch && matchesTags;
   });
 
-  const pinnedBookmarks = filteredBookmarks.filter(b => b.isPinned);
-  const unpinnedBookmarks = filteredBookmarks.filter(b => !b.isPinned);
+  const sortedBookmarks = sortBookmarks(filteredBookmarks);
+  const pinnedBookmarks = sortedBookmarks.filter(b => b.isPinned);
+  const unpinnedBookmarks = sortedBookmarks.filter(b => !b.isPinned);
 
   return (
     <main className="min-h-screen bg-dark p-2">
@@ -130,6 +168,15 @@ export default function Home() {
           bookmarks={bookmarks}
         />
 
+        <div className="my-4">
+          <SortControls
+            currentSort={currentSort}
+            currentOrder={currentOrder}
+            onSortChange={setCurrentSort}
+            onOrderChange={setCurrentOrder}
+          />
+        </div>
+
         <BookmarkList
           pinnedBookmarks={pinnedBookmarks}
           unpinnedBookmarks={unpinnedBookmarks}
@@ -137,6 +184,7 @@ export default function Home() {
           onTogglePin={handleTogglePin}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          onBookmarkClick={handleBookmarkClick}
         />
 
         {isModalOpen && (
@@ -147,7 +195,7 @@ export default function Home() {
               setSelectedBookmark(undefined);
             }}
             onSave={handleSave}
-            availableTags={availableTags}
+            availableTags={DEFAULT_TAGS}
           />
         )}
       </div>

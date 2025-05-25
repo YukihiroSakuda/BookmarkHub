@@ -7,6 +7,8 @@ export interface Bookmark {
   createdAt: string;
   updatedAt: string;
   favicon?: string;
+  accessCount: number;
+  lastAccessedAt?: string;
 }
 
 export interface Settings {
@@ -17,14 +19,17 @@ export interface Settings {
 }
 
 export const DEFAULT_TAGS = [
-  '技術',
-  'ブログ',
-  'ドキュメント',
-  'ツール',
-  'ニュース',
-  'チュートリアル',
-  '参考',
-  '重要',
-  '後で読む',
-  'お気に入り'
-]; 
+  'Technology',
+  'Blog',
+  'Documentation',
+  'Tools',
+  'News',
+  'Tutorial',
+  'Reference',
+  'Important',
+  'Read Later',
+  'Favorite'
+];
+
+export type SortOption = 'accessCount' | 'title' | 'createdAt';
+export type SortOrder = 'asc' | 'desc'; 

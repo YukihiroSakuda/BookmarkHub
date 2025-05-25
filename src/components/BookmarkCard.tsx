@@ -4,6 +4,7 @@ import { Tag } from './Tag';
 import { Button } from './Button';
 import { useState } from 'react';
 import Image from 'next/image';
+import { cn } from '@/lib/utils';
 
 interface BookmarkCardProps {
   bookmark: Bookmark;
@@ -11,6 +12,7 @@ interface BookmarkCardProps {
   onTogglePin: (id: string) => void;
   onEdit: (bookmark: Bookmark) => void;
   onDelete: (id: string) => void;
+  onClick: () => void;
 }
 
 export function BookmarkCard({ 
@@ -18,7 +20,8 @@ export function BookmarkCard({
   viewMode, 
   onTogglePin, 
   onEdit, 
-  onDelete 
+  onDelete,
+  onClick
 }: BookmarkCardProps) {
   const getFaviconUrl = (url: string) => {
     try {
@@ -59,11 +62,13 @@ export function BookmarkCard({
   }
 
   return (
-    <div className={`bg-dark-lighter/50 backdrop-blur-sm rounded-xl border border-energy-purple/30 shadow-lg hover:shadow-neon transition-all duration-300 ${
-      viewMode === 'list' 
-        ? 'flex items-center justify-between p-4' 
-        : 'flex flex-col p-4'
-    }`}>
+    <div
+      className={`bg-dark-lighter/50 backdrop-blur-sm rounded-xl border border-energy-purple/30 shadow-lg hover:shadow-neon transition-all duration-300 ${
+        viewMode === 'list' 
+          ? 'flex items-center justify-between p-4' 
+          : 'flex flex-col p-4'
+      }`}
+    >
       {viewMode === 'list' ? (
         // List View Layout
         <div className="flex items-center flex-1 min-w-0 gap-4">
@@ -73,6 +78,10 @@ export function BookmarkCard({
             target="_blank"
             rel="noopener noreferrer"
             className="flex-1 min-w-0 overflow-hidden cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              onClick();
+            }}
           >
             <h3 className="font-medium text-energy-green text-sm truncate">
               {bookmark.title}
@@ -85,20 +94,31 @@ export function BookmarkCard({
           </div>
           <div className="flex items-center justify-end space-x-2">
             <Button
-              onClick={() => onTogglePin(bookmark.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onTogglePin(bookmark.id);
+              }}
               variant="secondary"
               size="sm"
               icon={Pin}
               isActive={bookmark.isPinned}
             />
             <Button
-              onClick={() => onEdit(bookmark)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(bookmark);
+              }}
               variant="secondary"
               size="sm"
               icon={SquarePen}
             />
             <Button
-              onClick={() => onDelete(bookmark.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (window.confirm('Are you sure you want to delete this bookmark?')) {
+                  onDelete(bookmark.id);
+                }
+              }}
               variant="secondary"
               size="sm"
               icon={Trash2}
@@ -113,6 +133,10 @@ export function BookmarkCard({
             target="_blank"
             rel="noopener noreferrer"
             className="flex-1 min-w-0 cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              onClick();
+            }}
           >
             <div className="flex items-center gap-2 mb-1">
               <FaviconDisplay url={getFaviconUrl(bookmark.url)} />
@@ -128,20 +152,31 @@ export function BookmarkCard({
           </a>
           <div className="flex items-center justify-end space-x-2 mt-3 pt-3 border-t border-energy-purple/20 bg-dark/30 -mx-4 -mb-4 px-4 py-3 rounded-b-xl">
             <Button
-              onClick={() => onTogglePin(bookmark.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onTogglePin(bookmark.id);
+              }}
               variant="secondary"
               size="sm"
               icon={Pin}
               isActive={bookmark.isPinned}
             />
             <Button
-              onClick={() => onEdit(bookmark)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(bookmark);
+              }}
               variant="secondary"
               size="sm"
               icon={SquarePen}
             />
             <Button
-              onClick={() => onDelete(bookmark.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (window.confirm('Are you sure you want to delete this bookmark?')) {
+                  onDelete(bookmark.id);
+                }
+              }}
               variant="secondary"
               size="sm"
               icon={Trash2}

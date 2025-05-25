@@ -2,6 +2,7 @@ import { SquarePen, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from './Button';
 import { Input } from './Input';
+import { DEFAULT_TAGS } from '@/types/bookmark';
 
 interface TagManagerProps {
   availableTags: string[];
@@ -10,7 +11,7 @@ interface TagManagerProps {
 }
 
 export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerProps) {
-  const [tags, setTags] = useState<string[]>(availableTags);
+  const [tags, setTags] = useState<string[]>([...new Set([...DEFAULT_TAGS, ...availableTags])]);
   const [newTag, setNewTag] = useState('');
   const [editingTag, setEditingTag] = useState<string | null>(null);
   const [editValue, setEditValue] = useState('');
@@ -140,7 +141,7 @@ export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerP
           </div>
         </div>
 
-        <div className="flex justify-end gap-2 mt-6 pt-4 border-t border-energy-purple/20">
+        <div className="flex justify-end gap-2 mt-6">
           <Button
             type="button"
             onClick={onClose}

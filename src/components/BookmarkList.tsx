@@ -8,6 +8,7 @@ interface BookmarkListProps {
   onTogglePin: (id: string) => void;
   onEdit: (bookmark: Bookmark) => void;
   onDelete: (id: string) => void;
+  onBookmarkClick: (bookmark: Bookmark) => void;
 }
 
 export function BookmarkList({
@@ -17,6 +18,7 @@ export function BookmarkList({
   onTogglePin,
   onEdit,
   onDelete,
+  onBookmarkClick,
 }: BookmarkListProps) {
   const renderBookmarks = (bookmarks: Bookmark[]) => (
     bookmarks.map((bookmark) => (
@@ -27,6 +29,7 @@ export function BookmarkList({
         onTogglePin={onTogglePin}
         onEdit={onEdit}
         onDelete={onDelete}
+        onClick={() => onBookmarkClick(bookmark)}
       />
     ))
   );
