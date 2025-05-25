@@ -16,34 +16,6 @@ export function useImportBookmarks({
   const [isImporting, setIsImporting] = useState(false);
   const [importedCount, setImportedCount] = useState(0);
 
-  const parseBookmarks = (doc: Document): Bookmark[] => {
-    const bookmarks: Bookmark[] = [];
-    const links = doc.getElementsByTagName('a');
-
-    for (let i = 0; i < links.length; i++) {
-      const link = links[i];
-      const url = link.getAttribute('href');
-      const title = link.textContent || '';
-      const addDate = link.getAttribute('add_date');
-      const tags = link.getAttribute('tags')?.split(',') || [];
-
-      if (url) {
-        bookmarks.push({
-          id: crypto.randomUUID(),
-          url,
-          title,
-          tags,
-          isPinned: false,
-          accessCount: 0,
-          createdAt: addDate ? new Date(parseInt(addDate) * 1000).toISOString() : new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        });
-      }
-    }
-
-    return bookmarks;
-  };
-
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
