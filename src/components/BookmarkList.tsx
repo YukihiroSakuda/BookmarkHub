@@ -9,6 +9,7 @@ interface BookmarkListProps {
   onEdit: (bookmark: Bookmark) => void;
   onDelete: (id: string) => void;
   onBookmarkClick: (bookmark: Bookmark) => void;
+  onTagClick: (tag: string) => void;
 }
 
 export function BookmarkList({
@@ -19,6 +20,7 @@ export function BookmarkList({
   onEdit,
   onDelete,
   onBookmarkClick,
+  onTagClick,
 }: BookmarkListProps) {
   const renderBookmarks = (bookmarks: Bookmark[]) => (
     bookmarks.map((bookmark) => (
@@ -30,6 +32,7 @@ export function BookmarkList({
         onEdit={onEdit}
         onDelete={onDelete}
         onClick={() => onBookmarkClick(bookmark)}
+        onTagClick={onTagClick}
       />
     ))
   );

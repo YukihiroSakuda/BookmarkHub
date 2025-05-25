@@ -1,7 +1,9 @@
 import { Bookmark } from '@/types/bookmark';
-import { Pin, SquarePen, Trash2, Globe } from 'lucide-react';
-import { Tag } from './Tag';
+import { formatDistanceToNow } from 'date-fns';
+import { ja } from 'date-fns/locale';
+import { ExternalLink, Trash2, Edit2, Pin, SquarePen, Globe } from 'lucide-react';
 import { Button } from './Button';
+import { Tag } from './Tag';
 import { useState } from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
@@ -13,6 +15,7 @@ interface BookmarkCardProps {
   onEdit: (bookmark: Bookmark) => void;
   onDelete: (id: string) => void;
   onClick: () => void;
+  onTagClick: (tag: string) => void;
 }
 
 export function BookmarkCard({ 
@@ -21,7 +24,8 @@ export function BookmarkCard({
   onTogglePin, 
   onEdit, 
   onDelete,
-  onClick
+  onClick,
+  onTagClick
 }: BookmarkCardProps) {
   const getFaviconUrl = (url: string) => {
     try {

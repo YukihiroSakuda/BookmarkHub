@@ -41,13 +41,15 @@ export function BookmarkForm({ bookmark, onClose, onSave, availableTags, onUpdat
     );
   };
 
-  const handleAddTag = () => {
-    if (newTag && !tags.includes(newTag)) {
-      const updatedTags = [...tags, newTag];
-      setTags(updatedTags);
-      onUpdateTags([...availableTags, newTag]);
-      setNewTag('');
+  const handleAddTag = (tag: string) => {
+    if (!tag.trim()) return;
+    if (!tags.includes(tag)) {
+      setTags([...tags, tag]);
+      if (!availableTags.includes(tag)) {
+        onUpdateTags([...availableTags, tag]);
+      }
     }
+    setNewTag('');
   };
 
   const handleRemoveTag = (tagToRemove: string) => {
@@ -111,7 +113,7 @@ export function BookmarkForm({ bookmark, onClose, onSave, availableTags, onUpdat
               />
               <Button
                 type="button"
-                onClick={handleAddTag}
+                onClick={() => handleAddTag(newTag)}
                 variant="secondary"
                 size="md"
               >

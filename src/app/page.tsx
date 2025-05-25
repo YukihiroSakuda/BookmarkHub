@@ -126,6 +126,13 @@ export default function Home() {
       );
     }
     
+    // タグが削除された場合、選択中のタグからも削除
+    if (removedTags.length > 0) {
+      setSelectedTags(prev => 
+        prev.filter(tag => !removedTags.includes(tag))
+      );
+    }
+    
     // 既存のブックマークを更新
     const updatedBookmarks = bookmarks.map(bookmark => ({
       ...bookmark,
@@ -223,6 +230,7 @@ export default function Home() {
           onEdit={handleEdit}
           onDelete={handleDelete}
           onBookmarkClick={handleBookmarkClick}
+          onTagClick={handleTagClick}
         />
 
         {isModalOpen && (
