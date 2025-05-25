@@ -1,12 +1,9 @@
 import { Bookmark } from '@/types/bookmark';
-import { formatDistanceToNow } from 'date-fns';
-import { ja } from 'date-fns/locale';
 import { ExternalLink, Trash2, Edit2, Pin, SquarePen, Globe } from 'lucide-react';
 import { Button } from './Button';
 import { Tag } from './Tag';
 import { useState } from 'react';
 import Image from 'next/image';
-import { cn } from '@/lib/utils';
 
 interface BookmarkCardProps {
   bookmark: Bookmark;

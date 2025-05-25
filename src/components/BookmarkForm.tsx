@@ -52,10 +52,6 @@ export function BookmarkForm({ bookmark, onClose, onSave, availableTags, onUpdat
     setNewTag('');
   };
 
-  const handleRemoveTag = (tagToRemove: string) => {
-    setTags(prev => prev.filter(tag => tag !== tagToRemove));
-  };
-
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return 'Never';
     return new Date(dateString).toLocaleString('en-US', {
