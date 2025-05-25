@@ -1,4 +1,4 @@
-import { Grid, List, Plus, Search, Tag, X, Upload, Download, MoreVertical, Trash2 } from 'lucide-react';
+import { Grid, List, Plus, Search, Tag, X, Upload, Download, MoreVertical, Trash2, BookHeart } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { TagManager } from './TagManager';
 import { Tag as TagComponent } from './Tag';
@@ -94,9 +94,12 @@ export function BookmarkHeader({
   return (
     <>
       <div className="flex items-center justify-between gap-3 my-4 px-4">
-        <h1 className="text-4xl font-bold bg-gradient-energy bg-clip-text text-transparent animate-gradient-x tracking-tight">
-          Bookmarks
-        </h1>
+        <div className="flex items-center gap-1">
+          <h1 className="text-4xl font-bold bg-gradient-energy bg-clip-text text-transparent animate-gradient-x tracking-tight">
+            Bookmarks
+          </h1>
+          <BookHeart className="text-[#db2aa9]" size={32} />
+        </div>
         <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 w-full md:w-auto max-w-4xl">
           <div className="relative flex-1">
             <input
