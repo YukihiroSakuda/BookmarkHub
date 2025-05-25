@@ -68,7 +68,7 @@ export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerP
 
         <div className="flex-1 overflow-y-auto pr-2 space-y-4">
           <div>
-            <div className="flex gap-2 mb-4 mx-2 mt-2">
+            <div className="flex gap-2 mb-4 mx-1 mt-2">
               <Input
                 value={newTag}
                 onChange={(e) => setNewTag(e.target.value)}
