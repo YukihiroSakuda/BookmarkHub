@@ -34,10 +34,11 @@ export default function Home() {
   const handleBookmarksUpdate = (updatedBookmarks: Bookmark[]) => {
     setBookmarks(updatedBookmarks);
     
-    // タグリストも更新
     const tags = new Set<string>();
     updatedBookmarks.forEach(bookmark => {
-      bookmark.tags.forEach(tag => tags.add(tag));
+      if (bookmark && Array.isArray(bookmark.tags)) {
+        bookmark.tags.forEach(tag => tags.add(tag));
+      }
     });
     setAvailableTags(Array.from(tags));
   };
