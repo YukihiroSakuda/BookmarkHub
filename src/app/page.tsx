@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { BookmarkList } from '@/components/BookmarkList';
 import { BookmarkHeader } from '@/components/BookmarkHeader';
 import { getBookmarks, saveBookmarks } from '@/utils/storage';
-import { Bookmark, SortOption, SortOrder, DEFAULT_TAGS } from '@/types/bookmark';
+import { Bookmark, SortOption, SortOrder } from '@/types/bookmark';
 import { useImportBookmarks } from '@/components/ImportBookmarks';
 import { BookmarkForm } from '@/components/BookmarkForm';
 import { SortControls } from '@/components/SortControls';
@@ -16,7 +16,7 @@ export default function Home() {
   const [selectedBookmark, setSelectedBookmark] = useState<Bookmark | undefined>(undefined);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [availableTags, setAvailableTags] = useState<string[]>(DEFAULT_TAGS);
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [currentSort, setCurrentSort] = useState<SortOption>('accessCount');
   const [currentOrder, setCurrentOrder] = useState<SortOrder>('desc');
   useImportBookmarks({
@@ -49,6 +49,14 @@ export default function Home() {
 
   useEffect(() => {
     const savedBookmarks = getBookmarks();
+    // 既存のブックマークからタグを抽出
+    const tags = new Set<string>();
+    savedBookmarks.forEach(bookmark => {
+      if (bookmark && Array.isArray(bookmark.tags)) {
+        bookmark.tags.forEach(tag => tags.add(tag));
+      }
+    });
+    setAvailableTags(Array.from(tags));
     handleBookmarksUpdate(savedBookmarks);
   }, []);
 
@@ -100,6 +108,35 @@ export default function Home() {
   };
 
   const handleUpdateTags = (tags: string[]) => {
+    // 削除されたタグを特定
+    const removedTags = availableTags.filter(tag => !tags.includes(tag));
+    
+    // 名前が変更されたタグを特定
+    const renamedTags = new Map<string, string>();
+    const newTags = tags.filter(tag => !availableTags.includes(tag));
+    
+    // 新しいタグと古いタグの対応を設定
+    if (newTags.length === 1 && removedTags.length === 1) {
+      // 1つのタグが変更された場合
+      renamedTags.set(removedTags[0], newTags[0]);
+      
+      // フィルタリング状態を更新
+      setSelectedTags(prev => 
+        prev.map(tag => renamedTags.get(tag) || tag)
+      );
+    }
+    
+    // 既存のブックマークを更新
+    const updatedBookmarks = bookmarks.map(bookmark => ({
+      ...bookmark,
+      tags: bookmark.tags
+        .filter(tag => !removedTags.includes(tag) || renamedTags.has(tag)) // 削除されたタグを除去（名前変更されたタグは保持）
+        .map(tag => renamedTags.get(tag) || tag) // 名前が変更されたタグを更新
+    }));
+    
+    // ブックマークを更新
+    saveBookmarks(updatedBookmarks);
+    handleBookmarksUpdate(updatedBookmarks);
     setAvailableTags(tags);
   };
 
@@ -196,7 +233,8 @@ export default function Home() {
               setSelectedBookmark(undefined);
             }}
             onSave={handleSave}
-            availableTags={DEFAULT_TAGS}
+            availableTags={availableTags}
+            onUpdateTags={handleUpdateTags}
           />
         )}
       </div>
