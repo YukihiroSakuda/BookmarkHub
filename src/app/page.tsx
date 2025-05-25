@@ -36,6 +36,7 @@ export default function Home() {
 
   const handleBookmarksUpdate = (updatedBookmarks: Bookmark[]) => {
     setBookmarks(updatedBookmarks);
+    saveBookmarks(updatedBookmarks);
     
     const tags = new Set<string>();
     updatedBookmarks.forEach(bookmark => {

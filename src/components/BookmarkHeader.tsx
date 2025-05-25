@@ -1,5 +1,5 @@
-import { Grid, List, Plus, Search, Tag, X, Upload, Download } from 'lucide-react';
-import { useState } from 'react';
+import { Grid, List, Plus, Search, Tag, X, Upload, Download, MoreVertical, Trash2 } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
 import { TagManager } from './TagManager';
 import { Tag as TagComponent } from './Tag';
 import { Button } from './Button';
@@ -37,9 +37,26 @@ export function BookmarkHeader({
   bookmarks,
 }: BookmarkHeaderProps) {
   const [isTagManagerOpen, setIsTagManagerOpen] = useState(false);
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
+  const moreMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (moreMenuRef.current && !moreMenuRef.current.contains(event.target as Node)) {
+        setIsMoreMenuOpen(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const { isImporting, handleFileUpload } = useImportBookmarks({
     onImportComplete: (count) => {
       alert(`${count} bookmarks imported successfully!`);
+      setIsMoreMenuOpen(false);
     },
     onBookmarksUpdate
   });
@@ -64,6 +81,14 @@ export function BookmarkHeader({
   const handleExportClick = () => {
     const html = exportBookmarksToHtml(bookmarks);
     downloadHtml(html);
+    setIsMoreMenuOpen(false);
+  };
+
+  const handleDeleteAll = () => {
+    if (window.confirm('Are you sure you want to delete all bookmarks? This action cannot be undone.')) {
+      onBookmarksUpdate([]);
+      setIsMoreMenuOpen(false);
+    }
   };
 
   return (
@@ -90,25 +115,42 @@ export function BookmarkHeader({
               size="lg"
               icon={viewMode === 'grid' ? List : Grid}
             />
-            <Button
-              onClick={handleImportClick}
-              variant="secondary"
-              size="lg"
-              icon={Upload}
-              disabled={isImporting}
-              title="Import bookmarks from browser's HTML file"
-            >
-              {isImporting ? 'Importing...' : 'Import from HTML'}
-            </Button>
-            <Button
-              onClick={handleExportClick}
-              variant="secondary"
-              size="lg"
-              icon={Download}
-              title="Export bookmarks to HTML file"
-            >
-              Export to HTML
-            </Button>
+            <div className="relative" ref={moreMenuRef}>
+              <Button
+                onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
+                variant="secondary"
+                size="lg"
+                icon={MoreVertical}
+                isActive={isMoreMenuOpen}
+              />
+              {isMoreMenuOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-dark-lighter/90 backdrop-blur-sm rounded-lg border border-energy-purple/30 shadow-lg py-1 z-50">
+                  <button
+                    className="w-full px-4 py-2 text-left text-sm text-white/90 hover:bg-energy-purple/20 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={handleImportClick}
+                    disabled={isImporting}
+                  >
+                    <Upload size={16} />
+                    {isImporting ? 'Importing...' : 'Import from HTML'}
+                  </button>
+                  <button
+                    className="w-full px-4 py-2 text-left text-sm text-white/90 hover:bg-energy-purple/20 flex items-center gap-2"
+                    onClick={handleExportClick}
+                  >
+                    <Download size={16} />
+                    Export to HTML
+                  </button>
+                  <div className="border-t border-energy-purple/20 my-1"></div>
+                  <button
+                    className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-500/20 flex items-center gap-2"
+                    onClick={handleDeleteAll}
+                  >
+                    <Trash2 size={16} />
+                    Delete All Bookmarks
+                  </button>
+                </div>
+              )}
+            </div>
             <Button
               onClick={onAddBookmark}
               variant="primary"
