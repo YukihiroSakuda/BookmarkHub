@@ -95,7 +95,7 @@ export function BookmarkHeader({
     <>
       <div className="flex items-center justify-between gap-3 my-4 px-4">
         <h1 className="text-4xl font-bold bg-gradient-energy bg-clip-text text-transparent animate-gradient-x tracking-tight">
-          BookmarkHub
+          Bookmarks
         </h1>
         <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 w-full md:w-auto max-w-4xl">
           <div className="relative flex-1">

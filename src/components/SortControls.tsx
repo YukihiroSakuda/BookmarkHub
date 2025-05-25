@@ -1,5 +1,5 @@
 import { SortOption, SortOrder } from '@/types/bookmark';
-import { ArrowUpDown, Clock, TrendingUp, Type } from 'lucide-react';
+import { ArrowUpDown, Clock, TrendingUp, TypeOutline  } from 'lucide-react';
 import { Button } from './Button';
 
 interface SortControlsProps {
@@ -17,7 +17,7 @@ export function SortControls({
 }: SortControlsProps) {
   const sortOptions = [
     { value: 'accessCount' as SortOption, label: 'Access Count', icon: TrendingUp },
-    { value: 'title' as SortOption, label: 'Title', icon: Type },
+    { value: 'title' as SortOption, label: 'Title', icon: TypeOutline  },
     { value: 'createdAt' as SortOption, label: 'Created Date', icon: Clock },
   ];
 
