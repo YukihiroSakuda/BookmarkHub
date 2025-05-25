@@ -10,12 +10,14 @@ interface BookmarkFormProps {
   onClose: () => void;
   onSave: (bookmarkData: Omit<Bookmark, 'id'>) => void;
   availableTags: string[];
+  onUpdateTags: (tags: string[]) => void;
 }
 
-export function BookmarkForm({ bookmark, onClose, onSave, availableTags }: BookmarkFormProps) {
+export function BookmarkForm({ bookmark, onClose, onSave, availableTags, onUpdateTags }: BookmarkFormProps) {
   const [title, setTitle] = useState(bookmark?.title || '');
   const [url, setUrl] = useState(bookmark?.url || '');
   const [tags, setTags] = useState<string[]>(bookmark?.tags || []);
+  const [newTag, setNewTag] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +39,19 @@ export function BookmarkForm({ bookmark, onClose, onSave, availableTags }: Bookm
         ? prev.filter(t => t !== tag)
         : [...prev, tag]
     );
+  };
+
+  const handleAddTag = () => {
+    if (newTag && !tags.includes(newTag)) {
+      const updatedTags = [...tags, newTag];
+      setTags(updatedTags);
+      onUpdateTags([...availableTags, newTag]);
+      setNewTag('');
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove: string) => {
+    setTags(prev => prev.filter(tag => tag !== tagToRemove));
   };
 
   const formatDate = (dateString: string | undefined) => {
@@ -87,15 +102,36 @@ export function BookmarkForm({ bookmark, onClose, onSave, availableTags }: Bookm
             <label className="block text-sm font-medium text-white/90 mb-1">
               Tags
             </label>
-            <div className="flex flex-wrap gap-1.5">
-              {availableTags.map((tag) => (
-                <Tag
-                  key={tag}
-                  tag={tag}
-                  isSelected={tags.includes(tag)}
-                  onClick={() => handleTagClick(tag)}
-                />
-              ))}
+            <div className="flex gap-2">
+              <Input
+                value={newTag}
+                onChange={(e) => setNewTag(e.target.value)}
+                placeholder="Add new tag"
+                className="flex-1"
+              />
+              <Button
+                type="button"
+                onClick={handleAddTag}
+                variant="secondary"
+                size="md"
+              >
+                Add
+              </Button>
+            </div>
+            <div className="mt-2">
+              <label className="block text-sm font-medium text-white/90 mb-1">
+                Available Tags
+              </label>
+              <div className="flex flex-wrap gap-1.5">
+                {availableTags.map((tag) => (
+                  <Tag
+                    key={tag}
+                    tag={tag}
+                    isSelected={tags.includes(tag)}
+                    onClick={() => handleTagClick(tag)}
+                  />
+                ))}
+              </div>
             </div>
           </div>
 

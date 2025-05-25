@@ -18,18 +18,5 @@ export interface Settings {
   itemsPerPage: number;
 }
 
-export const DEFAULT_TAGS = [
-  'Technology',
-  'Blog',
-  'Documentation',
-  'Tools',
-  'News',
-  'Tutorial',
-  'Reference',
-  'Important',
-  'Read Later',
-  'Favorite'
-];
-
 export type SortOption = 'accessCount' | 'title' | 'createdAt';
 export type SortOrder = 'asc' | 'desc'; 

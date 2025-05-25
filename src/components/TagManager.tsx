@@ -2,7 +2,6 @@ import { SquarePen, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from './Button';
 import { Input } from './Input';
-import { DEFAULT_TAGS } from '@/types/bookmark';
 
 interface TagManagerProps {
   availableTags: string[];
@@ -11,7 +10,7 @@ interface TagManagerProps {
 }
 
 export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerProps) {
-  const [tags, setTags] = useState<string[]>([...new Set([...DEFAULT_TAGS, ...availableTags])]);
+  const [tags, setTags] = useState<string[]>([...availableTags]);
   const [newTag, setNewTag] = useState('');
   const [editingTag, setEditingTag] = useState<string | null>(null);
   const [editValue, setEditValue] = useState('');
@@ -73,7 +72,7 @@ export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerP
               <Input
                 value={newTag}
                 onChange={(e) => setNewTag(e.target.value)}
-                placeholder="Create a new tag"
+                placeholder="Add new tag"
               />
               <Button
                 type="button"
@@ -81,7 +80,7 @@ export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerP
                 variant="secondary"
                 size="md"
               >
-                Create
+                Add
               </Button>
             </div>
 
@@ -106,7 +105,7 @@ export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerP
                         variant="secondary"
                         size="sm"
                       >
-                        Save
+                        OK
                       </Button>
                       <Button
                         onClick={handleCancelEdit}
