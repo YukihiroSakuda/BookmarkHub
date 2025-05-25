@@ -223,14 +223,12 @@ export default function Home() {
         </div>
 
         <BookmarkList
-          pinnedBookmarks={pinnedBookmarks}
-          unpinnedBookmarks={unpinnedBookmarks}
+          bookmarks={[...pinnedBookmarks, ...unpinnedBookmarks]}
           viewMode={viewMode}
           onTogglePin={handleTogglePin}
           onEdit={handleEdit}
           onDelete={handleDelete}
           onBookmarkClick={handleBookmarkClick}
-          onTagClick={handleTagClick}
         />
 
         {isModalOpen && (
