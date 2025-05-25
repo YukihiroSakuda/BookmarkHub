@@ -223,7 +223,8 @@ export default function Home() {
         </div>
 
         <BookmarkList
-          bookmarks={[...pinnedBookmarks, ...unpinnedBookmarks]}
+          pinnedBookmarks={pinnedBookmarks}
+          unpinnedBookmarks={unpinnedBookmarks}
           viewMode={viewMode}
           onTogglePin={handleTogglePin}
           onEdit={handleEdit}
