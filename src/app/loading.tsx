@@ -21,7 +21,7 @@ export default function LoadingScreen() {
         <div className="flex flex-col items-center gap-4">
           <div className='flex gap-1'>
             <h1 className="text-5xl font-bold bg-gradient-energy bg-clip-text text-transparent">
-              BookmarkHub
+              Bookmarks
             </h1>
             <BookHeart 
               size={48} 

@@ -9,9 +9,11 @@ import { useImportBookmarks } from '@/components/ImportBookmarks';
 import { BookmarkForm } from '@/components/BookmarkForm';
 import { SortControls } from '@/components/SortControls';
 import LoadingScreen from './loading';
+import { cn } from '@/utils/ui';
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('grid');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -61,6 +63,9 @@ export default function Home() {
     
     setTimeout(() => {
       setIsLoading(false);
+      setTimeout(() => {
+        setIsVisible(true);
+      }, 300);
     }, 1000);
   }, []);
 
@@ -188,63 +193,68 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen bg-dark">
-      {isLoading ? (
+      <div className={cn(
+        "fixed inset-0 transition-opacity duration-700",
+        isLoading ? "opacity-100" : "opacity-0 pointer-events-none"
+      )}>
         <LoadingScreen />
-      ) : (
-        <main className="min-h-screen p-2">
-          <div className="w-full">
-            <BookmarkHeader
-              viewMode={viewMode}
-              onViewModeChange={setViewMode}
-              selectedTags={selectedTags}
-              onAddBookmark={() => {
-                setSelectedBookmark(undefined);
-                setIsModalOpen(true);
-              }}
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              availableTags={availableTags}
-              onTagClick={handleTagClick}
-              onUpdateTags={handleUpdateTags}
-              onClearAll={() => setSelectedTags([])}
-              onBookmarksUpdate={handleBookmarksUpdate}
-              bookmarks={bookmarks}
+      </div>
+      <main className={cn(
+        "min-h-screen p-2 transition-opacity duration-700",
+        isVisible ? "opacity-100" : "opacity-0"
+      )}>
+        <div className="w-full">
+          <BookmarkHeader
+            viewMode={viewMode}
+            onViewModeChange={setViewMode}
+            selectedTags={selectedTags}
+            onAddBookmark={() => {
+              setSelectedBookmark(undefined);
+              setIsModalOpen(true);
+            }}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            availableTags={availableTags}
+            onTagClick={handleTagClick}
+            onUpdateTags={handleUpdateTags}
+            onClearAll={() => setSelectedTags([])}
+            onBookmarksUpdate={handleBookmarksUpdate}
+            bookmarks={bookmarks}
+          />
+
+          <div className="my-4">
+            <SortControls
+              currentSort={currentSort}
+              currentOrder={currentOrder}
+              onSortChange={setCurrentSort}
+              onOrderChange={setCurrentOrder}
             />
-
-            <div className="my-4">
-              <SortControls
-                currentSort={currentSort}
-                currentOrder={currentOrder}
-                onSortChange={setCurrentSort}
-                onOrderChange={setCurrentOrder}
-              />
-            </div>
-
-            <BookmarkList
-              pinnedBookmarks={pinnedBookmarks}
-              unpinnedBookmarks={unpinnedBookmarks}
-              viewMode={viewMode}
-              onTogglePin={handleTogglePin}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onBookmarkClick={handleBookmarkClick}
-            />
-
-            {isModalOpen && (
-              <BookmarkForm
-                bookmark={selectedBookmark}
-                onClose={() => {
-                  setIsModalOpen(false);
-                  setSelectedBookmark(undefined);
-                }}
-                onSave={handleSave}
-                availableTags={availableTags}
-                onUpdateTags={handleUpdateTags}
-              />
-            )}
           </div>
-        </main>
-      )}
+
+          <BookmarkList
+            pinnedBookmarks={pinnedBookmarks}
+            unpinnedBookmarks={unpinnedBookmarks}
+            viewMode={viewMode}
+            onTogglePin={handleTogglePin}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onBookmarkClick={handleBookmarkClick}
+          />
+
+          {isModalOpen && (
+            <BookmarkForm
+              bookmark={selectedBookmark}
+              onClose={() => {
+                setIsModalOpen(false);
+                setSelectedBookmark(undefined);
+              }}
+              onSave={handleSave}
+              availableTags={availableTags}
+              onUpdateTags={handleUpdateTags}
+            />
+          )}
+        </div>
+      </main>
     </div>
   );
 }
