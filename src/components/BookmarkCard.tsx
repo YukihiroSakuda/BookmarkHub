@@ -1,5 +1,5 @@
 import { Bookmark } from '@/types/bookmark';
-import { ExternalLink, Trash2, Edit2, Pin, SquarePen, Globe } from 'lucide-react';
+import { Trash2, Pin, SquarePen, Globe } from 'lucide-react';
 import { Button } from './Button';
 import { Tag } from './Tag';
 import { useState } from 'react';
