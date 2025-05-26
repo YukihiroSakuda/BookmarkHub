@@ -110,6 +110,17 @@ export function BookmarkHeader({
               className="w-full px-3 py-2 pl-8 rounded-xl border border-energy-purple/30 bg-dark-lighter/50 backdrop-blur-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-energy-green/50 focus:border-transparent text-base transition-all duration-300"
             />
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-energy-purple/70" size={16} />
+            {searchQuery && (
+              <Button
+                type="button"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-energy-purple/70 hover:text-energy-pink/80 focus:outline-none"
+                onClick={() => onSearchChange("")}
+                variant="ghost"
+                size="sm"
+                icon={X}
+                aria-label="Clear search"
+              />
+            )}
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -220,4 +231,4 @@ export function BookmarkHeader({
       )}
     </>
   );
-} 
+}
