@@ -1,4 +1,4 @@
-import { Grid, List, Plus, Search, Tag, X, Upload, Download, MoreVertical, Trash2 } from 'lucide-react';
+import { Grid, List, Plus, Search, Tag, X, Upload, Download, MoreVertical, Trash2, User, LogOut } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { TagManager } from './TagManager';
 import { Tag as TagComponent } from './Tag';
@@ -6,6 +6,8 @@ import { Button } from './Button';
 import { useImportBookmarks } from './ImportBookmarks';
 import { Bookmark } from '@/types/bookmark';
 import { exportBookmarksToHtml, downloadHtml } from '@/utils/export';
+import { supabase } from '@/lib/supabaseClient';
+import { useRouter } from 'next/navigation';
 
 interface BookmarkHeaderProps {
   viewMode: 'list' | 'grid';
@@ -36,14 +38,28 @@ export function BookmarkHeader({
   onBookmarksUpdate,
   bookmarks,
 }: BookmarkHeaderProps) {
+  const router = useRouter();
   const [isTagManagerOpen, setIsTagManagerOpen] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const moreMenuRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // ユーザー情報の取得
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUserEmail(user?.email || null);
+    };
+    getUser();
+
     function handleClickOutside(event: MouseEvent) {
       if (moreMenuRef.current && !moreMenuRef.current.contains(event.target as Node)) {
         setIsMoreMenuOpen(false);
+      }
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false);
       }
     }
 
@@ -52,6 +68,15 @@ export function BookmarkHeader({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      router.replace('/auth');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   const { isImporting, handleFileUpload } = useImportBookmarks({
     onImportComplete: (count) => {
@@ -157,6 +182,28 @@ export function BookmarkHeader({
                   >
                     <Trash2 size={16} />
                     Delete All Bookmarks
+                  </button>
+                </div>
+              )}
+            </div>
+            <div className="relative" ref={userMenuRef}>
+              <Button
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                variant="secondary"
+                size="lg"
+                icon={User}
+              />
+              {isUserMenuOpen && (
+                <div className="absolute right-0 mt-2 w-48 text-neutral-400 bg-white dark:bg-black backdrop-blur-sm rounded-lg border shadow-lg py-1 z-50">
+                  <div className="px-4 py-2 text-sm border-b border-neutral-200 dark:border-neutral-700">
+                    {userEmail}
+                  </div>
+                  <button
+                    className="w-full px-4 py-2 text-left text-sm text-red-400 hover:text-red-600 flex items-center gap-2"
+                    onClick={handleSignOut}
+                  >
+                    <LogOut size={16} />
+                    Sign Out
                   </button>
                 </div>
               )}
