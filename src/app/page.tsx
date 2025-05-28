@@ -30,22 +30,34 @@ export default function Home() {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) {
+          console.error('Auth error:', error);
+          router.push('/auth');
+          return;
+        }
+        if (!session) {
+          router.push('/auth');
+          return;
+        }
+        setIsLoading(false);
+        setTimeout(() => {
+          setIsVisible(true);
+        }, 300);
+      } catch (err) {
+        console.error('Auth check error:', err);
         router.push('/auth');
-        return;
       }
-      setIsLoading(false);
-      setTimeout(() => {
-        setIsVisible(true);
-      }, 300);
     };
 
     checkAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!session) {
+      if (event === 'SIGNED_OUT' || !session) {
         router.push('/auth');
+      } else if (event === 'USER_UPDATED') {
+        router.refresh();
       }
     });
 
