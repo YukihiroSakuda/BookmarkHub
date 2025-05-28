@@ -114,7 +114,9 @@ export function BookmarkHeader({
                 type="button"
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-white"
                 onClick={() => onSearchChange("")}
-              />
+              >
+                <X size={16} />
+              </button>
             )}
           </div>
           <div className="flex items-center gap-2">
