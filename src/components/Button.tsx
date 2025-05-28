@@ -4,7 +4,7 @@ import React from 'react';
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children?: React.ReactNode;
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  variant?: 'primary' | 'secondary' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'ghost' ;
   size?: 'sm' | 'md' | 'lg';
   icon?: LucideIcon;
   className?: string;
@@ -23,15 +23,15 @@ export function Button({
   isActive = false,
   ...props
 }: ButtonProps) {
-  const baseStyles = 'inline-flex items-center justify-center gap-1.5 font-medium transition-all duration-300';
+  const baseStyles = 'inline-flex items-center justify-center gap-1.5 font-medium';
   
   const variantStyles = {
-    primary: 'bg-gradient-energy text-white hover:shadow-neon-green',
-    secondary: 'bg-dark/50 text-white/90 border border-energy-purple/30 hover:bg-dark/70 hover:text-energy-green hover:border-energy-purple/50 transition-colors',
-    ghost: 'bg-transparent text-white/60 hover:bg-white/5 hover:text-white transition-colors',
+    primary: 'bg-black hover:bg-neutral-700 dark:bg-white dark:hover:bg-neutral-300 text-white dark:text-black',
+    secondary: 'border-2 border-neutral-200 dark:border-neutral-800 hover:bg-neutral-100 dark:hover:bg-neutral-900',
+    ghost: 'hover:text-neutral-700 dark:hover:text-neutral-300',
   };
 
-  const activeStyles = 'text-energy-green shadow-[0_0_8px_rgba(168,85,247,0.6)]';
+  const activeStyles = 'text-blue-500';
 
   const sizeStyles = {
     sm: 'px-2 py-1 text-xs rounded-lg',

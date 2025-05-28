@@ -48,7 +48,7 @@ export function BookmarkList({
 
       {/* Separator */}
       {pinnedBookmarks.length > 0 && unpinnedBookmarks.length > 0 && (
-        <div className="border-t border-energy-purple/20 my-1"></div>
+        <div className="border-t my-1"></div>
       )}
 
       {/* Unpinned Bookmarks */}
@@ -64,7 +64,7 @@ export function BookmarkList({
       )}
 
       {pinnedBookmarks.length === 0 && unpinnedBookmarks.length === 0 && (
-        <div className="text-center py-12 text-white/60">
+        <div className="text-center py-1">
           <p>No bookmarks found.</p>
         </div>
       )}

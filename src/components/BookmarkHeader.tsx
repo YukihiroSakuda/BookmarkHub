@@ -1,4 +1,4 @@
-import { Grid, List, Plus, Search, Tag, X, Upload, Download, MoreVertical, Trash2, BookHeart } from 'lucide-react';
+import { Grid, List, Plus, Search, Tag, X, Upload, Download, MoreVertical, Trash2 } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 import { TagManager } from './TagManager';
 import { Tag as TagComponent } from './Tag';
@@ -95,10 +95,9 @@ export function BookmarkHeader({
     <>
       <div className="flex items-center justify-between gap-3 my-4 px-4">
         <div className="flex items-center gap-1">
-          <h1 className="text-4xl font-bold bg-gradient-energy bg-clip-text text-transparent animate-gradient-x tracking-tight">
-            Bookmarks
+          <h1 className="text-4xl font-bold">
+            Book<span className="text-blue-500">marks</span>
           </h1>
-          <BookHeart className="text-[#db2aa9]" size={32} />
         </div>
         <div className="flex flex-col md:flex-row items-stretch md:items-center gap-2 w-full md:w-auto max-w-4xl">
           <div className="relative flex-1">
@@ -107,18 +106,14 @@ export function BookmarkHeader({
               placeholder="Find your bookmarks..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full px-3 py-2 pl-8 rounded-xl border border-energy-purple/30 bg-dark-lighter/50 backdrop-blur-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-energy-green/50 focus:border-transparent text-base transition-all duration-300"
+              className="w-full px-3 py-2 pl-8 rounded-xl bg-neutral-200 dark:bg-neutral-800 text-neutral-400 placeholder-neutral-400 focus:ring-2 focus:ring-blue-300 focus:ring-opacity-50 focus:outline-none text-base"
             />
-            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-energy-purple/70" size={16} />
+            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-neutral-400" size={16} />
             {searchQuery && (
-              <Button
+              <button
                 type="button"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-energy-purple/70 hover:text-energy-pink/80 focus:outline-none"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-white"
                 onClick={() => onSearchChange("")}
-                variant="ghost"
-                size="sm"
-                icon={X}
-                aria-label="Clear search"
               />
             )}
           </div>
@@ -135,12 +130,11 @@ export function BookmarkHeader({
                 variant="secondary"
                 size="lg"
                 icon={MoreVertical}
-                isActive={isMoreMenuOpen}
               />
               {isMoreMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-dark-lighter/90 backdrop-blur-sm rounded-lg border border-energy-purple/30 shadow-lg py-1 z-50">
+                <div className="absolute right-0 mt-2 w-48 text-neutral-400 bg-white dark:bg-black backdrop-blur-sm rounded-lg border shadow-lg py-1 z-50">
                   <button
-                    className="w-full px-4 py-2 text-left text-sm text-white/90 hover:bg-energy-purple/20 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-2 text-left text-sm hover:text-black hover:dark:text-white flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={handleImportClick}
                     disabled={isImporting}
                   >
@@ -148,7 +142,7 @@ export function BookmarkHeader({
                     {isImporting ? 'Importing...' : 'Import from HTML'}
                   </button>
                   <button
-                    className="w-full px-4 py-2 text-left text-sm text-white/90 hover:bg-energy-purple/20 flex items-center gap-2"
+                    className="w-full px-4 py-2 text-left text-sm hover:text-black hover:dark:text-white flex items-center gap-2"
                     onClick={handleExportClick}
                   >
                     <Download size={16} />
@@ -156,7 +150,7 @@ export function BookmarkHeader({
                   </button>
                   <div className="border-t border-energy-purple/20 my-1"></div>
                   <button
-                    className="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-red-500/20 flex items-center gap-2"
+                    className="w-full px-4 py-2 text-left text-sm text-red-400 hover:text-red-600 flex items-center gap-2"
                     onClick={handleDeleteAll}
                   >
                     <Trash2 size={16} />
@@ -178,17 +172,10 @@ export function BookmarkHeader({
       </div>
 
       <div className="mb-4">
-        <div className="bg-dark-lighter/50 backdrop-blur-sm p-3 rounded-2xl border border-energy-purple/30 shadow-lg">
+        <div className="bg-white dark:bg-neutral-900 backdrop-blur-sm p-3 rounded-2xl border border-neutral-200 dark:border-neutral-600 shadow-sm">
           <div className="flex justify-between items-center mb-2">
             <div className="flex items-center gap-1.5">
-              <h2 className="text-base font-semibold bg-gradient-energy-green bg-clip-text text-transparent tracking-tight">Filter by Tags</h2>
-              {selectedTags.length > 0 && (
-                <span className="text-xs text-energy-pink/80">
-                  ({selectedTags.length} selected)
-                </span>
-              )}
-            </div>
-            <div className="flex items-center gap-1.5">
+              <h2 className="text-base font-semibold tracking-tight">Filter by Tags</h2>
               {selectedTags.length > 0 && (
                 <Button
                   onClick={onClearAll}
@@ -199,6 +186,8 @@ export function BookmarkHeader({
                   Clear all tags
                 </Button>
               )}
+            </div>
+            <div className="flex items-center">
               <Button
                 onClick={() => setIsTagManagerOpen(true)}
                 variant="ghost"

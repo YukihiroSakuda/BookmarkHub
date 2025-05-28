@@ -64,10 +64,10 @@ export function BookmarkForm({ bookmark, onClose, onSave, availableTags, onUpdat
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-dark-lighter/50 backdrop-blur-sm rounded-2xl border border-energy-purple/30 shadow-lg p-6 w-full max-w-lg">
+    <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 bg-white/50 dark:bg-black/50">
+      <div className="backdrop-blur-sm rounded-2xl border shadow-lg p-6 w-full max-w-lg">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold bg-gradient-energy bg-clip-text text-transparent">
+          <h2 className="text-xl font-bold">
             {bookmark ? 'Edit Your Bookmark' : 'Add New Bookmark'}
           </h2>
           <Button
@@ -97,7 +97,7 @@ export function BookmarkForm({ bookmark, onClose, onSave, availableTags, onUpdat
           />
 
           <div>
-            <label className="block text-sm font-medium text-white/90 mb-1">
+            <label className="block text-sm font-medium mb-1">
               Tags
             </label>
             <div className="flex gap-2">
@@ -110,14 +110,14 @@ export function BookmarkForm({ bookmark, onClose, onSave, availableTags, onUpdat
               <Button
                 type="button"
                 onClick={() => handleAddTag(newTag)}
-                variant="secondary"
+                variant="primary"
                 size="md"
               >
                 Add
               </Button>
             </div>
             <div className="mt-2">
-              <label className="block text-sm font-medium text-white/90 mb-1">
+              <label className="block text-sm font-medium mb-1">
                 Available Tags
               </label>
               <div className="flex flex-wrap gap-1.5">
@@ -134,12 +134,12 @@ export function BookmarkForm({ bookmark, onClose, onSave, availableTags, onUpdat
           </div>
 
           {bookmark && (
-            <div className="space-y-2 pt-2 border-t border-energy-purple/20">
-              <div className="flex items-center gap-2 text-sm text-white/70">
+            <div className="space-y-2 pt-2 border-t">
+              <div className="flex items-center gap-2 text-sm">
                 <TrendingUp size={16} />
                 <span>Access Count: {bookmark.accessCount || 0}</span>
               </div>
-              <div className="flex items-center gap-2 text-sm text-white/70">
+              <div className="flex items-center gap-2 text-sm">
                 <Clock size={16} />
                 <span>Created: {formatDate(bookmark.createdAt)}</span>
               </div>
@@ -156,7 +156,7 @@ export function BookmarkForm({ bookmark, onClose, onSave, availableTags, onUpdat
             <Button
               type="button"
               onClick={onClose}
-              variant="ghost"
+              variant="secondary"
               size="md"
             >
               Cancel

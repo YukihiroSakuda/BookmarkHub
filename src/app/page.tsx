@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { BookmarkList } from '@/components/BookmarkList';
 import { BookmarkHeader } from '@/components/BookmarkHeader';
 import { getBookmarks, saveBookmarks } from '@/utils/storage';
@@ -10,8 +11,11 @@ import { BookmarkForm } from '@/components/BookmarkForm';
 import { SortControls } from '@/components/SortControls';
 import LoadingScreen from './loading';
 import { cn } from '@/utils/ui';
+import { supabase } from '@/lib/supabaseClient';
+import ThemeSwitcher from '@/components/ThemeSwitcher';
 
 export default function Home() {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
@@ -23,6 +27,32 @@ export default function Home() {
   const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [currentSort, setCurrentSort] = useState<SortOption>('accessCount');
   const [currentOrder, setCurrentOrder] = useState<SortOrder>('desc');
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        router.push('/auth');
+        return;
+      }
+      setIsLoading(false);
+      setTimeout(() => {
+        setIsVisible(true);
+      }, 300);
+    };
+
+    checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!session) {
+        router.push('/auth');
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [router]);
 
   useImportBookmarks({
     onImportComplete: () => {
@@ -60,13 +90,6 @@ export default function Home() {
     });
     setAvailableTags(Array.from(tags));
     handleBookmarksUpdate(savedBookmarks);
-    
-    setTimeout(() => {
-      setIsLoading(false);
-      setTimeout(() => {
-        setIsVisible(true);
-      }, 300);
-    }, 1000);
   }, []);
 
   const handleSave = (bookmarkData: Omit<Bookmark, 'id'>) => {
@@ -191,14 +214,12 @@ export default function Home() {
   const pinnedBookmarks = sortedBookmarks.filter(b => b.isPinned);
   const unpinnedBookmarks = sortedBookmarks.filter(b => !b.isPinned);
 
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
   return (
-    <div className="relative min-h-screen bg-dark">
-      <div className={cn(
-        "fixed inset-0 transition-opacity duration-700",
-        isLoading ? "opacity-100" : "opacity-0 pointer-events-none"
-      )}>
-        <LoadingScreen />
-      </div>
+    <div className="relative min-h-screen">
       <main className={cn(
         "min-h-screen p-2 transition-opacity duration-700",
         isVisible ? "opacity-100" : "opacity-0"
@@ -255,6 +276,7 @@ export default function Home() {
           )}
         </div>
       </main>
+      <ThemeSwitcher />
     </div>
   );
 }

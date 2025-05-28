@@ -52,10 +52,10 @@ export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerP
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-dark-lighter/50 backdrop-blur-sm rounded-2xl border border-energy-purple/30 shadow-lg p-6 w-full max-w-lg max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 bg-white/50 dark:bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="backdrop-blur-sm rounded-2xl border border-energy-purple/30 shadow-lg p-6 w-full max-w-lg max-h-[90vh] flex flex-col">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold bg-gradient-energy bg-clip-text text-transparent">
+          <h2 className="text-xl font-bold">
             Edit Your Tags
           </h2>
           <Button
@@ -77,21 +77,21 @@ export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerP
               <Button
                 type="button"
                 onClick={handleAddTag}
-                variant="secondary"
+                variant="primary"
                 size="md"
               >
                 Add
               </Button>
             </div>
 
-            <label className="block text-sm font-medium text-white/90 mb-1">
+            <label className="block text-sm font-medium mb-1">
               Your Tags
             </label>
             <div className="space-y-2">
               {tags.map((tag) => (
                 <div
                   key={tag}
-                  className="flex items-center justify-between p-2 bg-dark/30 rounded-lg border border-energy-purple/20"
+                  className="flex items-center justify-between p-2 bg-neutral-100 dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-600"
                 >
                   {editingTag === tag ? (
                     <div className="flex-1 flex gap-2">
@@ -109,7 +109,7 @@ export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerP
                       </Button>
                       <Button
                         onClick={handleCancelEdit}
-                        variant="ghost"
+                        variant="secondary"
                         size="sm"
                       >
                         Cancel
@@ -117,17 +117,17 @@ export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerP
                     </div>
                   ) : (
                     <>
-                      <span className="text-white/90 text-sm">{tag}</span>
+                      <span className="text-sm">{tag}</span>
                       <div className="flex items-center gap-1">
                         <Button
                           onClick={() => handleStartEdit(tag)}
-                          variant="secondary"
+                          variant="ghost"
                           size="sm"
                           icon={SquarePen}
                         />
                         <Button
                           onClick={() => handleRemoveTag(tag)}
-                          variant="secondary"
+                          variant="ghost"
                           size="sm"
                           icon={Trash2}
                         />
@@ -144,7 +144,7 @@ export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerP
           <Button
             type="button"
             onClick={onClose}
-            variant="ghost"
+            variant="secondary"
             size="md"
           >
             Cancel

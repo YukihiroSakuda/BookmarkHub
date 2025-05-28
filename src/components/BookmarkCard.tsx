@@ -43,11 +43,11 @@ export function BookmarkCard({
     const [showFallback, setShowFallback] = useState(false);
 
     if (!url || showFallback) {
-      return <Globe className="w-4 h-4 text-energy-purple/70" />;
+      return <Globe className="size-4 text-black dark:text-white" />;
     }
 
     return (
-      <div className="relative w-4 h-4">
+      <div className="relative size-4">
         <Image
           src={url}
           alt=""
@@ -62,15 +62,15 @@ export function BookmarkCard({
 
   return (
     <div
-      className={`bg-dark-lighter/50 backdrop-blur-sm rounded-xl border border-energy-purple/30 shadow-lg hover:shadow-neon transition-all duration-300 ${
+      className={`backdrop-blur-sm rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-600 shadow-sm hover:bg-blue-50 dark:hover:bg-neutral-800 ${
         viewMode === 'list' 
-          ? 'flex items-center justify-between p-4' 
+          ? 'flex items-center justify-between p-2' 
           : 'flex flex-col p-4'
       }`}
     >
       {viewMode === 'list' ? (
         // List View Layout
-        <div className="flex items-center flex-1 min-w-0 gap-4">
+        <div className="flex items-center flex-1 min-w-0 gap-2">
           <FaviconDisplay url={getFaviconUrl(bookmark.url)} />
           <a
             href={bookmark.url}
@@ -82,7 +82,7 @@ export function BookmarkCard({
               onClick();
             }}
           >
-            <h3 className="font-medium text-energy-green text-sm truncate">
+            <h3 className="font-medium text-sm truncate">
               {bookmark.title}
             </h3>
           </a>
@@ -97,7 +97,7 @@ export function BookmarkCard({
                 e.stopPropagation();
                 onTogglePin(bookmark.id);
               }}
-              variant="secondary"
+              variant="ghost"
               size="sm"
               icon={Pin}
               isActive={bookmark.isPinned}
@@ -107,7 +107,7 @@ export function BookmarkCard({
                 e.stopPropagation();
                 onEdit(bookmark);
               }}
-              variant="secondary"
+              variant="ghost"
               size="sm"
               icon={SquarePen}
             />
@@ -118,7 +118,7 @@ export function BookmarkCard({
                   onDelete(bookmark.id);
                 }
               }}
-              variant="secondary"
+              variant="ghost"
               size="sm"
               icon={Trash2}
             />
@@ -149,13 +149,13 @@ export function BookmarkCard({
               ))}
             </div>
           </a>
-          <div className="flex items-center justify-end space-x-2 mt-3 pt-3 border-t border-energy-purple/20 bg-dark/30 -mx-4 -mb-4 px-4 py-3 rounded-b-xl">
+          <div className="flex items-center justify-end space-x-2 mt-3 pt-3 border-t border-neutral-200 dark:border-neutral-600 -mx-4 -mb-4 px-4 py-3 rounded-b-xl">
             <Button
               onClick={(e) => {
                 e.stopPropagation();
                 onTogglePin(bookmark.id);
               }}
-              variant="secondary"
+              variant="ghost"
               size="sm"
               icon={Pin}
               isActive={bookmark.isPinned}
@@ -165,7 +165,7 @@ export function BookmarkCard({
                 e.stopPropagation();
                 onEdit(bookmark);
               }}
-              variant="secondary"
+              variant="ghost"
               size="sm"
               icon={SquarePen}
             />
@@ -176,7 +176,7 @@ export function BookmarkCard({
                   onDelete(bookmark.id);
                 }
               }}
-              variant="secondary"
+              variant="ghost"
               size="sm"
               icon={Trash2}
             />

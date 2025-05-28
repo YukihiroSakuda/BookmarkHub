@@ -22,8 +22,8 @@ export function SortControls({
   ];
 
   return (
-    <div className="flex items-center gap-2 bg-dark-lighter/50 backdrop-blur-sm p-2 rounded-xl border border-energy-purple/30">
-      <span className="text-sm text-white/60">Sort by:</span>
+    <div className="flex items-center gap-2 bg-white dark:bg-neutral-900 backdrop-blur-sm p-2 rounded-xl border border-neutral-200 dark:border-neutral-600 shadow-sm">
+      <span className="text-sm">Sort by:</span>
       <div className="flex items-center gap-1">
         {sortOptions.map(({ value, label, icon: Icon }) => (
           <Button
