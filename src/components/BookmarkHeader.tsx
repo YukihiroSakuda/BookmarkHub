@@ -4,7 +4,7 @@ import { TagManager } from './TagManager';
 import { Tag as TagComponent } from './Tag';
 import { Button } from './Button';
 import { useImportBookmarks } from './ImportBookmarks';
-import { BookmarkUI } from '@/types/bookmark';
+import { BookmarkUI, convertToUI } from '@/types/bookmark';
 import { exportBookmarksToHtml, downloadHtml } from '@/utils/export';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
@@ -18,7 +18,6 @@ interface BookmarkHeaderProps {
   onSearchChange: (query: string) => void;
   availableTags: string[];
   onTagClick: (tag: string) => void;
-  onUpdateTags: (tags: string[]) => Promise<void>;
   onClearAll: () => void;
   onBookmarksUpdate: (bookmarks: BookmarkUI[]) => void;
   bookmarks: BookmarkUI[];
@@ -33,7 +32,6 @@ export function BookmarkHeader({
   onSearchChange,
   availableTags,
   onTagClick,
-  onUpdateTags,
   onClearAll,
   onBookmarksUpdate,
   bookmarks,
@@ -267,7 +265,129 @@ export function BookmarkHeader({
         <TagManager
           availableTags={availableTags}
           onClose={() => setIsTagManagerOpen(false)}
-          onUpdateTags={onUpdateTags}
+          onUpdateTagName={async (oldName, newName) => {
+            try {
+              const { data: { session } } = await supabase.auth.getSession();
+              if (!session) {
+                throw new Error('No active session');
+              }
+
+              // タグ名を更新
+              const { error: updateError } = await supabase
+                .from('tags')
+                .update({ name: newName })
+                .eq('user_id', session.user.id)
+                .eq('name', oldName);
+
+              if (updateError) throw updateError;
+
+              // ブックマークのタグを更新
+              const { data: bookmarks, error: bookmarksError } = await supabase
+                .from('bookmarks')
+                .select(`
+                  *,
+                  bookmarks_tags (
+                    tags (
+                      name
+                    )
+                  )
+                `)
+                .eq('user_id', session.user.id);
+              
+              if (bookmarksError) throw bookmarksError;
+
+              // タグ情報を整形
+              const formattedBookmarks = bookmarks.map(convertToUI);
+              onBookmarksUpdate(formattedBookmarks);
+            } catch (error) {
+              console.error('Error updating tag name:', error);
+              alert('タグ名の更新中にエラーが発生しました。');
+              throw error;
+            }
+          }}
+          onAddTag={async (tag) => {
+            try {
+              const { data: { session } } = await supabase.auth.getSession();
+              if (!session) {
+                throw new Error('No active session');
+              }
+
+              // 新しいタグを追加
+              const { error: insertError } = await supabase
+                .from('tags')
+                .insert({
+                  name: tag,
+                  user_id: session.user.id,
+                  created_at: new Date().toISOString(),
+                  updated_at: new Date().toISOString()
+                });
+
+              if (insertError) throw insertError;
+
+              // ブックマークのタグを更新
+              const { data: bookmarks, error: bookmarksError } = await supabase
+                .from('bookmarks')
+                .select(`
+                  *,
+                  bookmarks_tags (
+                    tags (
+                      name
+                    )
+                  )
+                `)
+                .eq('user_id', session.user.id);
+              
+              if (bookmarksError) throw bookmarksError;
+
+              // タグ情報を整形
+              const formattedBookmarks = bookmarks.map(convertToUI);
+              onBookmarksUpdate(formattedBookmarks);
+            } catch (error) {
+              console.error('Error adding tag:', error);
+              alert('タグの追加中にエラーが発生しました。');
+              throw error;
+            }
+          }}
+          onRemoveTag={async (tag) => {
+            try {
+              const { data: { session } } = await supabase.auth.getSession();
+              if (!session) {
+                throw new Error('No active session');
+              }
+
+              // タグを削除
+              const { error: deleteError } = await supabase
+                .from('tags')
+                .delete()
+                .eq('user_id', session.user.id)
+                .eq('name', tag);
+
+              if (deleteError) throw deleteError;
+
+              // ブックマークのタグを更新
+              const { data: bookmarks, error: bookmarksError } = await supabase
+                .from('bookmarks')
+                .select(`
+                  *,
+                  bookmarks_tags (
+                    tags (
+                      name
+                    )
+                  )
+                `)
+                .eq('user_id', session.user.id);
+              
+              if (bookmarksError) throw bookmarksError;
+
+              // タグ情報を整形
+              const formattedBookmarks = bookmarks.map(convertToUI);
+              onBookmarksUpdate(formattedBookmarks);
+            } catch (error) {
+              console.error('Error removing tag:', error);
+              alert('タグの削除中にエラーが発生しました。');
+              throw error;
+            }
+          }}
         />
       )}
     </>

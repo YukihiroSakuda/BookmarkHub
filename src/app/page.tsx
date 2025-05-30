@@ -141,6 +141,25 @@ export default function Home() {
 
   const handleBookmarksUpdate = async (updatedBookmarks: BookmarkUI[]) => {
     setBookmarks(updatedBookmarks);
+    
+    // タグ一覧を更新
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('No active session');
+      }
+
+      const { data: tags, error: tagsError } = await supabase
+        .from('tags')
+        .select('name')
+        .eq('user_id', session.user.id);
+      
+      if (tagsError) throw tagsError;
+      const tagNames = tags.map(tag => tag.name);
+      setAvailableTags(tagNames);
+    } catch (error) {
+      console.error('Error updating tags:', error);
+    }
   };
 
   // タグを取得する関数
@@ -604,7 +623,6 @@ export default function Home() {
             onSearchChange={setSearchQuery}
             availableTags={availableTags}
             onTagClick={handleTagClick}
-            onUpdateTags={handleUpdateTags}
             onClearAll={() => setSelectedTags([])}
             onBookmarksUpdate={handleBookmarksUpdate}
             bookmarks={bookmarks}

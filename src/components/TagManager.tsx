@@ -1,15 +1,23 @@
 import { SquarePen, Trash2, X } from 'lucide-react';
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from './Button';
 import { Input } from './Input';
 
 interface TagManagerProps {
   availableTags: string[];
   onClose: () => void;
-  onUpdateTags: (tags: string[]) => Promise<void>;
+  onUpdateTagName: (oldName: string, newName: string) => Promise<void>;
+  onAddTag: (tag: string) => Promise<void>;
+  onRemoveTag: (tag: string) => Promise<void>;
 }
 
-export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerProps) {
+export function TagManager({ 
+  availableTags, 
+  onClose, 
+  onUpdateTagName,
+  onAddTag,
+  onRemoveTag 
+}: TagManagerProps) {
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState('');
   const [editingTag, setEditingTag] = useState<string | null>(null);
@@ -19,7 +27,7 @@ export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerP
     setTags([...availableTags]);
   }, [availableTags]);
 
-  const handleAddTag = () => {
+  const handleAddTag = async () => {
     const normalizedTag = newTag.trim();
     if (!normalizedTag) {
       console.log('Tag is empty after trimming');
@@ -31,16 +39,28 @@ export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerP
     );
     
     if (!isDuplicate) {
-      setTags([...tags, normalizedTag]);
-      setNewTag('');
+      try {
+        await onAddTag(normalizedTag);
+        setTags([...tags, normalizedTag]);
+        setNewTag('');
+      } catch (error) {
+        console.error('Error adding tag:', error);
+        alert('タグの追加中にエラーが発生しました。');
+      }
     } else {
       console.log('Tag not added - duplicate or empty');
     }
   };
 
-  const handleRemoveTag = (tagToRemove: string) => {
+  const handleRemoveTag = async (tagToRemove: string) => {
     if (window.confirm(`Are you sure you want to delete the tag "${tagToRemove}"?`)) {
-      setTags(tags.filter(tag => tag !== tagToRemove));
+      try {
+        await onRemoveTag(tagToRemove);
+        setTags(tags.filter(tag => tag !== tagToRemove));
+      } catch (error) {
+        console.error('Error removing tag:', error);
+        alert('タグの削除中にエラーが発生しました。');
+      }
     }
   };
 
@@ -49,7 +69,7 @@ export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerP
     setEditValue(tag);
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     const normalizedEditValue = editValue.trim();
     if (editingTag && normalizedEditValue) {
       const isDuplicate = tags.some(tag => 
@@ -57,9 +77,15 @@ export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerP
       );
       
       if (!isDuplicate) {
-        setTags(tags.map(tag => tag === editingTag ? normalizedEditValue : tag));
-        setEditingTag(null);
-        setEditValue('');
+        try {
+          await onUpdateTagName(editingTag, normalizedEditValue);
+          setTags(tags.map(tag => tag === editingTag ? normalizedEditValue : tag));
+          setEditingTag(null);
+          setEditValue('');
+        } catch (error) {
+          console.error('Error updating tag:', error);
+          alert('タグの更新中にエラーが発生しました。');
+        }
       }
     }
   };
@@ -67,16 +93,6 @@ export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerP
   const handleCancelEdit = () => {
     setEditingTag(null);
     setEditValue('');
-  };
-
-  const handleSave = async () => {
-    try {
-      await onUpdateTags(tags);
-      onClose();
-    } catch (error) {
-      console.error('Error saving tags:', error);
-      alert('タグの保存中にエラーが発生しました。');
-    }
   };
 
   return (
@@ -115,75 +131,66 @@ export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerP
             <label className="block text-sm font-medium mb-1">
               Your Tags
             </label>
-            <div className="space-y-2">
-              {tags.map((tag) => (
-                <div
-                  key={tag}
-                  className="flex items-center justify-between p-2 bg-neutral-100 dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-600"
-                >
-                  {editingTag === tag ? (
-                    <div className="flex-1 flex gap-2">
-                      <Input
-                        value={editValue}
-                        onChange={(e) => setEditValue(e.target.value)}
-                        className="flex-1"
+            
+            {tags.map((tag) => (
+              <div
+                key={tag}
+                className="flex items-center justify-between p-2 bg-neutral-100 dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-600"
+              >
+                {editingTag === tag ? (
+                  <div className="flex-1 flex gap-2">
+                    <Input
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      className="flex-1"
+                    />
+                    <Button
+                      onClick={handleSaveEdit}
+                      variant="secondary"
+                      size="sm"
+                    >
+                      OK
+                    </Button>
+                    <Button
+                      onClick={handleCancelEdit}
+                      variant="secondary"
+                      size="sm"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <span className="text-sm">{tag}</span>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        onClick={() => handleStartEdit(tag)}
+                        variant="ghost"
+                        size="sm"
+                        icon={SquarePen}
                       />
                       <Button
-                        onClick={handleSaveEdit}
-                        variant="secondary"
+                        onClick={() => handleRemoveTag(tag)}
+                        variant="ghost"
                         size="sm"
-                      >
-                        OK
-                      </Button>
-                      <Button
-                        onClick={handleCancelEdit}
-                        variant="secondary"
-                        size="sm"
-                      >
-                        Cancel
-                      </Button>
+                        icon={Trash2}
+                      />
                     </div>
-                  ) : (
-                    <>
-                      <span className="text-sm">{tag}</span>
-                      <div className="flex items-center gap-1">
-                        <Button
-                          onClick={() => handleStartEdit(tag)}
-                          variant="ghost"
-                          size="sm"
-                          icon={SquarePen}
-                        />
-                        <Button
-                          onClick={() => handleRemoveTag(tag)}
-                          variant="ghost"
-                          size="sm"
-                          icon={Trash2}
-                        />
-                      </div>
-                    </>
-                  )}
-                </div>
-              ))}
-            </div>
+                  </>
+                )}
+              </div>
+            ))}
           </div>
         </div>
 
-        <div className="flex justify-end gap-2 mt-6">
+        <div className="flex justify-end gap-2 mt-4">
           <Button
             type="button"
             onClick={onClose}
             variant="secondary"
             size="md"
           >
-            Cancel
-          </Button>
-          <Button
-            type="button"
-            onClick={handleSave}
-            variant="primary"
-            size="md"
-          >
-            Save Changes
+            Close
           </Button>
         </div>
       </div>
