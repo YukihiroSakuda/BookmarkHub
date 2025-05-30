@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { getBookmarks, saveBookmarks } from '@/utils/storage';
 import { BookmarkUI } from '@/types/bookmark';
+import { supabase } from '@/lib/supabaseClient';
 
 interface UseImportBookmarksProps {
   onImportComplete?: (importedCount: number) => void;
@@ -27,11 +27,21 @@ export function useImportBookmarks({
       const doc = parser.parseFromString(text, 'text/html');
       const links = doc.getElementsByTagName('a');
       
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('No active session');
+      }
+
       // 既存のブックマークを取得
-      const existingBookmarks = await getBookmarks();
-      
+      const { data: existingBookmarks, error: fetchError } = await supabase
+        .from('bookmarks')
+        .select('url')
+        .eq('user_id', session.user.id);
+
+      if (fetchError) throw fetchError;
+
       // 新しいブックマークを作成
-      const newBookmarks: BookmarkUI[] = Array.from(links).map(link => {
+      const newBookmarks = Array.from(links).map(link => {
         let createdAt: string;
         try {
           const addDate = link.getAttribute('add_date');
@@ -49,31 +59,61 @@ export function useImportBookmarks({
         }
         
         return {
-          id: crypto.randomUUID(),
           title: link.textContent || '',
           url: link.href,
-          tags: [],
-          isPinned: false,
-          createdAt,
-          updatedAt: createdAt,
-          accessCount: 0,
-          favicon: undefined
+          is_pinned: false,
+          created_at: createdAt,
+          updated_at: createdAt,
+          access_count: 0,
+          user_id: session.user.id
         };
       });
 
       // 重複をチェック（URLベース）
       const uniqueNewBookmarks = newBookmarks.filter(newBookmark => 
-        !existingBookmarks.some(existing => existing.url === newBookmark.url)
+        !existingBookmarks?.some(existing => existing.url === newBookmark.url)
       );
 
-      // 既存のブックマークと新しいブックマークを結合
-      const updatedBookmarks = [...existingBookmarks, ...uniqueNewBookmarks];
-      
-      // ローカルストレージに保存
-      await saveBookmarks(updatedBookmarks);
+      if (uniqueNewBookmarks.length > 0) {
+        // 新しいブックマークをデータベースに保存
+        const { error: insertError } = await supabase
+          .from('bookmarks')
+          .insert(uniqueNewBookmarks);
 
-      // ブックマークリストを更新
-      onBookmarksUpdate?.(updatedBookmarks);
+        if (insertError) throw insertError;
+      }
+
+      // 更新されたブックマーク一覧を取得
+      const { data: updatedBookmarks, error: updateError } = await supabase
+        .from('bookmarks')
+        .select(`
+          *,
+          bookmarks_tags (
+            tags (
+              name
+            )
+          )
+        `)
+        .eq('user_id', session.user.id);
+
+      if (updateError) throw updateError;
+
+      // UI用のデータに変換
+      const uiBookmarks = updatedBookmarks.map(bookmark => ({
+        id: bookmark.id,
+        title: bookmark.title,
+        url: bookmark.url,
+        tags: bookmark.bookmarks_tags?.map((bt: { tags: { name: string } }) => bt.tags.name) || [],
+        isPinned: bookmark.is_pinned,
+        createdAt: bookmark.created_at,
+        updatedAt: bookmark.updated_at,
+        accessCount: bookmark.access_count,
+        lastAccessedAt: bookmark.last_accessed_at,
+        favicon: bookmark.favicon
+      }));
+
+      // UIを更新
+      onBookmarksUpdate?.(uiBookmarks);
 
       setImportedCount(uniqueNewBookmarks.length);
       onImportComplete?.(uniqueNewBookmarks.length);
@@ -89,7 +129,6 @@ export function useImportBookmarks({
   return {
     isImporting,
     importedCount,
-    handleFileUpload,
-    onImportComplete
+    handleFileUpload
   };
 } 
