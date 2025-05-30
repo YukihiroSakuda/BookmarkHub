@@ -249,14 +249,16 @@ export function BookmarkHeader({
             </div>
           </div>
           <div className="flex flex-wrap gap-1.5">
-            {availableTags.map((tag) => (
-              <TagComponent
-                key={tag}
-                tag={tag}
-                onClick={() => onTagClick(tag)}
-                isSelected={selectedTags.includes(tag)}
-              />
-            ))}
+            {availableTags
+              .sort((a, b) => a.localeCompare(b))
+              .map((tag) => (
+                <TagComponent
+                  key={tag}
+                  tag={tag}
+                  onClick={() => onTagClick(tag)}
+                  isSelected={selectedTags.includes(tag)}
+                />
+              ))}
           </div>
         </div>
       </div>

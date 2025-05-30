@@ -87,9 +87,11 @@ export function BookmarkCard({
             </h3>
           </a>
           <div className="flex items-center flex-wrap gap-1.5 overflow-hidden">
-            {bookmark.tags.map((tag) => (
-              <Tag key={tag} tag={tag} isSelected={true} />
-            ))}
+            {bookmark.tags
+              .sort((a, b) => a.localeCompare(b))
+              .map((tag) => (
+                <Tag key={tag} tag={tag} isSelected={true} />
+              ))}
           </div>
           <div className="flex items-center justify-end space-x-2">
             <Button
@@ -144,9 +146,11 @@ export function BookmarkCard({
               </h3>
             </div>
             <div className="flex flex-wrap gap-1.5 mt-2">
-              {bookmark.tags.map((tag) => (
-                <Tag key={tag} tag={tag} isSelected={true} />
-              ))}
+              {bookmark.tags
+                .sort((a, b) => a.localeCompare(b))
+                .map((tag) => (
+                  <Tag key={tag} tag={tag} isSelected={true} />
+                ))}
             </div>
           </a>
           <div className="flex items-center justify-end space-x-2 mt-3 pt-3 border-t border-neutral-200 dark:border-neutral-600 -mx-4 -mb-4 px-4 py-3 rounded-b-xl">
