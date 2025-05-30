@@ -48,7 +48,6 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
-  const [filterTags, setFilterTags] = useState<string[]>([]);
   const [currentSort, setCurrentSort] = useState<SortOption>('accessCount');
   const [currentOrder, setCurrentOrder] = useState<SortOrder>('desc');
 
@@ -142,14 +141,6 @@ export default function Home() {
 
   const handleBookmarksUpdate = async (updatedBookmarks: BookmarkUI[]) => {
     setBookmarks(updatedBookmarks);
-    // ブックマークに紐づいているタグのみをフィルター用に設定
-    const tags = new Set<string>();
-    updatedBookmarks.forEach((bookmark: BookmarkUI) => {
-      if (bookmark && Array.isArray(bookmark.tags)) {
-        bookmark.tags.forEach((tag: string) => tags.add(tag));
-      }
-    });
-    setFilterTags(Array.from(tags));
   };
 
   // タグを取得する関数
@@ -611,7 +602,7 @@ export default function Home() {
             }}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
-            availableTags={filterTags}
+            availableTags={availableTags}
             onTagClick={handleTagClick}
             onUpdateTags={handleUpdateTags}
             onClearAll={() => setSelectedTags([])}
