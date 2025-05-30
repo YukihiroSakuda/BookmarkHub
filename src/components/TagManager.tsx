@@ -132,56 +132,59 @@ export function TagManager({
               Your Tags
             </label>
             
-            {tags
-              .sort((a, b) => a.localeCompare(b))
-              .map((tag) => (
-                <div
-                  key={tag}
-                  className="flex items-center justify-between p-2 bg-neutral-100 dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-600"
-                >
-                  {editingTag === tag ? (
-                    <div className="flex-1 flex gap-2">
-                      <Input
-                        value={editValue}
-                        onChange={(e) => setEditValue(e.target.value)}
-                        className="flex-1"
-                      />
-                      <Button
-                        onClick={handleSaveEdit}
-                        variant="secondary"
-                        size="sm"
-                      >
-                        OK
-                      </Button>
-                      <Button
-                        onClick={handleCancelEdit}
-                        variant="secondary"
-                        size="sm"
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  ) : (
-                    <>
-                      <span className="text-sm">{tag}</span>
-                      <div className="flex items-center gap-1">
-                        <Button
-                          onClick={() => handleStartEdit(tag)}
-                          variant="ghost"
-                          size="sm"
-                          icon={SquarePen}
+            <div className="flex flex-col gap-2">
+              {tags
+                .sort((a, b) => a.localeCompare(b))
+                .map((tag) => (
+                  <div
+                    key={tag}
+                    className="flex items-center justify-between p-2 bg-neutral-100 dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-600"
+                  >
+                    {editingTag === tag ? (
+                      <div className="flex-1 flex gap-2">
+                        <Input
+                          value={editValue}
+                          onChange={(e) => setEditValue(e.target.value)}
+                          className="flex-1"
                         />
                         <Button
-                          onClick={() => handleRemoveTag(tag)}
-                          variant="ghost"
+                          onClick={handleSaveEdit}
+                          variant="secondary"
                           size="sm"
-                          icon={Trash2}
-                        />
+                        >
+                          OK
+                        </Button>
+                        <Button
+                          onClick={handleCancelEdit}
+                          variant="secondary"
+                          size="sm"
+                        >
+                          Cancel
+                        </Button>
                       </div>
-                    </>
-                  )}
-                </div>
-              ))}
+                    ) : (
+                      <>
+                        <span className="text-sm">{tag}</span>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            onClick={() => handleStartEdit(tag)}
+                            variant="ghost"
+                            size="sm"
+                            icon={SquarePen}
+                          />
+                          <Button
+                            onClick={() => handleRemoveTag(tag)}
+                            variant="ghost"
+                            size="sm"
+                            icon={Trash2}
+                          />
+                        </div>
+                      </>
+                    )}
+                  </div>
+                ))}
+            </div>
+      
           </div>
         </div>
 
