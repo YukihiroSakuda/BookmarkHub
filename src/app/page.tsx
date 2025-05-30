@@ -352,16 +352,27 @@ export default function Home() {
       
       if (error) throw error;
 
+      // ブックマークを再取得（タグ情報を含む）
       const { data: updatedBookmarks, error: fetchError } = await supabase
         .from('bookmarks')
-        .select('*')
+        .select(`
+          *,
+          bookmarks_tags (
+            tags (
+              name
+            )
+          )
+        `)
         .eq('user_id', session.user.id);
       
       if (fetchError) throw fetchError;
-      handleBookmarksUpdate(updatedBookmarks);
+
+      // タグ情報を整形
+      const formattedBookmarks = updatedBookmarks.map(convertToUI);
+      handleBookmarksUpdate(formattedBookmarks);
     } catch (error) {
       console.error('Error deleting bookmark:', error);
-      // エラー処理を追加
+      alert('ブックマークの削除中にエラーが発生しました。');
     }
   };
 
@@ -383,16 +394,27 @@ export default function Home() {
       
       if (error) throw error;
 
+      // ブックマークを再取得（タグ情報を含む）
       const { data: updatedBookmarks, error: fetchError } = await supabase
         .from('bookmarks')
-        .select('*')
+        .select(`
+          *,
+          bookmarks_tags (
+            tags (
+              name
+            )
+          )
+        `)
         .eq('user_id', session.user.id);
       
       if (fetchError) throw fetchError;
-      handleBookmarksUpdate(updatedBookmarks);
+
+      // タグ情報を整形
+      const formattedBookmarks = updatedBookmarks.map(convertToUI);
+      handleBookmarksUpdate(formattedBookmarks);
     } catch (error) {
       console.error('Error toggling pin:', error);
-      // エラー処理を追加
+      alert('ブックマークのピン状態の更新中にエラーが発生しました。');
     }
   };
 
