@@ -192,8 +192,8 @@ export function BookmarkHeader({
                 icon={User}
               />
               {isUserMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 text-neutral-400 bg-white dark:bg-black backdrop-blur-sm rounded-lg border shadow-lg py-1 z-50">
-                  <div className="px-4 py-2 text-sm border-b border-neutral-200 dark:border-neutral-700">
+                <div className="absolute right-0 mt-2 w-64 text-neutral-400 bg-white dark:bg-black backdrop-blur-sm rounded-lg border shadow-lg py-1 z-50">
+                  <div className="px-4 py-2 text-sm border-b border-neutral-200 dark:border-neutral-700 truncate">
                     {userEmail}
                   </div>
                   <button
