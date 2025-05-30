@@ -97,10 +97,11 @@ export function TagManager({
 
   return (
     <div className="fixed inset-0 bg-white/50 dark:bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-black rounded-2xl border border-energy-purple/30 shadow-lg p-6 w-full max-w-lg max-h-[90vh] flex flex-col">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">
-            Edit Your Tags
+      <div className="bg-white dark:bg-black rounded-2xl border shadow-lg p-6 w-full max-w-lg max-h-[90vh] flex flex-col">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold">
+            <span className="text-blue-500">#</span>
+            Tag Manager
           </h2>
           <Button
             onClick={onClose}

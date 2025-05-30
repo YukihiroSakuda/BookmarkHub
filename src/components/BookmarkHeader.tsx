@@ -279,7 +279,10 @@ export function BookmarkHeader({
         <div className="bg-white dark:bg-neutral-900 backdrop-blur-sm p-3 rounded-2xl border border-neutral-200 dark:border-neutral-600 shadow-sm">
           <div className="flex justify-between items-center mb-2">
             <div className="flex items-center gap-1.5">
-              <h2 className="text-base font-semibold tracking-tight">Filter by Tags</h2>
+              <h2 className="text-sm font-medium tracking-tight">
+                <span className="text-blue-500">#</span>
+                {' '}Filter by Tags
+              </h2>
               {selectedTags.length > 0 && (
                 <Button
                   onClick={onClearAll}
@@ -293,10 +296,7 @@ export function BookmarkHeader({
             </div>
             <div className="flex items-center">
               <Button
-                onClick={() => {
-                  console.log('Current availableTags before opening TagManager:', availableTags);
-                  setIsTagManagerOpen(true);
-                }}
+                onClick={() => setIsTagManagerOpen(true)}
                 variant="ghost"
                 size="sm"
                 icon={Tag}
