@@ -157,6 +157,9 @@ export default function Home() {
       if (tagsError) throw tagsError;
       const tagNames = tags.map(tag => tag.name);
       setAvailableTags(tagNames);
+
+      // 選択中のタグで存在しないものを除外
+      setSelectedTags(prev => prev.filter(tag => tagNames.includes(tag)));
     } catch (error) {
       console.error('Error updating tags:', error);
     }
