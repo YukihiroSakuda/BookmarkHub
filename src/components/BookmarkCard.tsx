@@ -1,4 +1,4 @@
-import { Bookmark } from '@/types/bookmark';
+import { BookmarkUI } from '@/types/bookmark';
 import { Trash2, Pin, SquarePen, Globe } from 'lucide-react';
 import { Button } from './Button';
 import { Tag } from './Tag';
@@ -6,10 +6,10 @@ import { useState } from 'react';
 import Image from 'next/image';
 
 interface BookmarkCardProps {
-  bookmark: Bookmark;
+  bookmark: BookmarkUI;
   viewMode: 'list' | 'grid';
   onTogglePin: (id: string) => void;
-  onEdit: (bookmark: Bookmark) => void;
+  onEdit: (bookmark: BookmarkUI) => void;
   onDelete: (id: string) => void;
   onClick: () => void;
 }

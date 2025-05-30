@@ -4,7 +4,7 @@ import { TagManager } from './TagManager';
 import { Tag as TagComponent } from './Tag';
 import { Button } from './Button';
 import { useImportBookmarks } from './ImportBookmarks';
-import { Bookmark } from '@/types/bookmark';
+import { BookmarkUI } from '@/types/bookmark';
 import { exportBookmarksToHtml, downloadHtml } from '@/utils/export';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
@@ -18,10 +18,10 @@ interface BookmarkHeaderProps {
   onSearchChange: (query: string) => void;
   availableTags: string[];
   onTagClick: (tag: string) => void;
-  onUpdateTags: (tags: string[]) => void;
+  onUpdateTags: (tags: string[]) => Promise<void>;
   onClearAll: () => void;
-  onBookmarksUpdate: (bookmarks: Bookmark[]) => void;
-  bookmarks: Bookmark[];
+  onBookmarksUpdate: (bookmarks: BookmarkUI[]) => void;
+  bookmarks: BookmarkUI[];
 }
 
 export function BookmarkHeader({
@@ -199,7 +199,7 @@ export function BookmarkHeader({
                     {userEmail}
                   </div>
                   <button
-                    className="w-full px-4 py-2 text-left text-sm text-red-400 hover:text-red-600 flex items-center gap-2"
+                    className="w-full px-4 py-2 text-left text-sm hover:text-black hover:dark:text-white flex items-center gap-2"
                     onClick={handleSignOut}
                   >
                     <LogOut size={16} />
@@ -214,7 +214,7 @@ export function BookmarkHeader({
               size="lg"
               icon={Plus}
             >
-              Add New Bookmark
+              Add Bookmark
             </Button>
           </div>
         </div>
@@ -238,7 +238,10 @@ export function BookmarkHeader({
             </div>
             <div className="flex items-center">
               <Button
-                onClick={() => setIsTagManagerOpen(true)}
+                onClick={() => {
+                  console.log('Current availableTags before opening TagManager:', availableTags);
+                  setIsTagManagerOpen(true);
+                }}
                 variant="ghost"
                 size="sm"
                 icon={Tag}

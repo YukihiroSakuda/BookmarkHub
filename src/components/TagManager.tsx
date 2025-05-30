@@ -1,24 +1,40 @@
 import { SquarePen, Trash2, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { Button } from './Button';
 import { Input } from './Input';
 
 interface TagManagerProps {
   availableTags: string[];
   onClose: () => void;
-  onUpdateTags: (tags: string[]) => void;
+  onUpdateTags: (tags: string[]) => Promise<void>;
 }
 
 export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerProps) {
-  const [tags, setTags] = useState<string[]>([...availableTags]);
+  const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState('');
   const [editingTag, setEditingTag] = useState<string | null>(null);
   const [editValue, setEditValue] = useState('');
 
+  useEffect(() => {
+    setTags([...availableTags]);
+  }, [availableTags]);
+
   const handleAddTag = () => {
-    if (newTag && !tags.includes(newTag)) {
-      setTags([...tags, newTag]);
+    const normalizedTag = newTag.trim();
+    if (!normalizedTag) {
+      console.log('Tag is empty after trimming');
+      return;
+    }
+
+    const isDuplicate = tags.some(tag => 
+      tag.toLowerCase() === normalizedTag.toLowerCase()
+    );
+    
+    if (!isDuplicate) {
+      setTags([...tags, normalizedTag]);
       setNewTag('');
+    } else {
+      console.log('Tag not added - duplicate or empty');
     }
   };
 
@@ -34,10 +50,17 @@ export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerP
   };
 
   const handleSaveEdit = () => {
-    if (editingTag && editValue && !tags.includes(editValue)) {
-      setTags(tags.map(tag => tag === editingTag ? editValue : tag));
-      setEditingTag(null);
-      setEditValue('');
+    const normalizedEditValue = editValue.trim();
+    if (editingTag && normalizedEditValue) {
+      const isDuplicate = tags.some(tag => 
+        tag !== editingTag && tag.toLowerCase() === normalizedEditValue.toLowerCase()
+      );
+      
+      if (!isDuplicate) {
+        setTags(tags.map(tag => tag === editingTag ? normalizedEditValue : tag));
+        setEditingTag(null);
+        setEditValue('');
+      }
     }
   };
 
@@ -46,9 +69,14 @@ export function TagManager({ availableTags, onClose, onUpdateTags }: TagManagerP
     setEditValue('');
   };
 
-  const handleSave = () => {
-    onUpdateTags(tags);
-    onClose();
+  const handleSave = async () => {
+    try {
+      await onUpdateTags(tags);
+      onClose();
+    } catch (error) {
+      console.error('Error saving tags:', error);
+      alert('タグの保存中にエラーが発生しました。');
+    }
   };
 
   return (

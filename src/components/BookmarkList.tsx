@@ -1,14 +1,14 @@
-import { Bookmark } from '@/types/bookmark';
+import { BookmarkUI } from '@/types/bookmark';
 import { BookmarkCard } from './BookmarkCard';
 
 interface BookmarkListProps {
-  pinnedBookmarks: Bookmark[];
-  unpinnedBookmarks: Bookmark[];
+  pinnedBookmarks: BookmarkUI[];
+  unpinnedBookmarks: BookmarkUI[];
   viewMode: 'list' | 'grid';
   onTogglePin: (id: string) => void;
-  onEdit: (bookmark: Bookmark) => void;
+  onEdit: (bookmark: BookmarkUI) => void;
   onDelete: (id: string) => void;
-  onBookmarkClick: (bookmark: Bookmark) => void;
+  onBookmarkClick: (bookmark: BookmarkUI) => void;
 }
 
 export function BookmarkList({
@@ -20,7 +20,7 @@ export function BookmarkList({
   onDelete,
   onBookmarkClick
 }: BookmarkListProps) {
-  const renderBookmarks = (bookmarks: Bookmark[]) => (
+  const renderBookmarks = (bookmarks: BookmarkUI[]) => (
     bookmarks.map((bookmark) => (
       <BookmarkCard
         key={bookmark.id}

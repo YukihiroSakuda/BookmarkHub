@@ -2,11 +2,11 @@
 
 import { useState } from 'react';
 import { getBookmarks, saveBookmarks } from '@/utils/storage';
-import { Bookmark } from '@/types/bookmark';
+import { BookmarkUI } from '@/types/bookmark';
 
 interface UseImportBookmarksProps {
   onImportComplete?: (importedCount: number) => void;
-  onBookmarksUpdate?: (bookmarks: Bookmark[]) => void;
+  onBookmarksUpdate?: (bookmarks: BookmarkUI[]) => void;
 }
 
 export function useImportBookmarks({ 
@@ -28,10 +28,10 @@ export function useImportBookmarks({
       const links = doc.getElementsByTagName('a');
       
       // 既存のブックマークを取得
-      const existingBookmarks = getBookmarks();
+      const existingBookmarks = await getBookmarks();
       
       // 新しいブックマークを作成
-      const newBookmarks: Bookmark[] = Array.from(links).map(link => {
+      const newBookmarks: BookmarkUI[] = Array.from(links).map(link => {
         let createdAt: string;
         try {
           const addDate = link.getAttribute('add_date');
@@ -70,7 +70,7 @@ export function useImportBookmarks({
       const updatedBookmarks = [...existingBookmarks, ...uniqueNewBookmarks];
       
       // ローカルストレージに保存
-      saveBookmarks(updatedBookmarks);
+      await saveBookmarks(updatedBookmarks);
 
       // ブックマークリストを更新
       onBookmarksUpdate?.(updatedBookmarks);

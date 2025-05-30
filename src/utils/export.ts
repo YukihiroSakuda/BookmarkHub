@@ -1,6 +1,6 @@
-import { Bookmark } from '@/types/bookmark';
+import { BookmarkUI } from '@/types/bookmark';
 
-export function exportBookmarksToHtml(bookmarks: Bookmark[]): string {
+export function exportBookmarksToHtml(bookmarks: BookmarkUI[]): string {
   const html = `<!DOCTYPE NETSCAPE-Bookmark-file-1>
 <!-- This is an automatically generated file.
      It will be read and overwritten.

@@ -1,4 +1,4 @@
-import { Bookmark } from '@/types/bookmark';
+import { BookmarkUI } from '@/types/bookmark';
 import { X, Clock, TrendingUp } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from './Button';
@@ -6,9 +6,9 @@ import { Tag } from './Tag';
 import { Input } from './Input';
 
 interface BookmarkFormProps {
-  bookmark?: Bookmark;
+  bookmark?: BookmarkUI;
   onClose: () => void;
-  onSave: (bookmarkData: Omit<Bookmark, 'id'>) => void;
+  onSave: (bookmarkData: Omit<BookmarkUI, 'id'>) => void;
   availableTags: string[];
   onUpdateTags: (tags: string[]) => void;
 }

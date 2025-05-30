@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     const links = doc.getElementsByTagName('a');
     
     // 既存のブックマークを取得
-    const existingBookmarks = getBookmarks();
+    const existingBookmarks = await getBookmarks();
     
     // 新しいブックマークを作成
     const newBookmarks = Array.from(links).map(link => ({
