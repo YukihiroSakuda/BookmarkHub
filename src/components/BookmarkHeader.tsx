@@ -107,10 +107,67 @@ export function BookmarkHeader({
     setIsMoreMenuOpen(false);
   };
 
-  const handleDeleteAll = () => {
-    if (window.confirm('Are you sure you want to delete all bookmarks? This action cannot be undone.')) {
-      onBookmarksUpdate([]);
-      setIsMoreMenuOpen(false);
+  const handleDeleteAll = async () => {
+    if (window.confirm('Are you sure you want to delete all bookmarks and tags? This action cannot be undone.')) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          throw new Error('No active session');
+        }
+
+        // ブックマークとタグの関連付けを削除
+        const { data: bookmarks, error: bookmarksError } = await supabase
+          .from('bookmarks')
+          .select('id')
+          .eq('user_id', session.user.id);
+
+        if (bookmarksError) {
+          console.error('Error fetching bookmarks:', bookmarksError);
+          throw new Error(`Failed to fetch bookmarks: ${bookmarksError.message}`);
+        }
+
+        if (bookmarks && bookmarks.length > 0) {
+          const bookmarkIds = bookmarks.map(b => b.id);
+          const { error: bookmarksTagsError } = await supabase
+            .from('bookmarks_tags')
+            .delete()
+            .in('bookmark_id', bookmarkIds);
+
+          if (bookmarksTagsError) {
+            console.error('Error deleting bookmarks_tags:', bookmarksTagsError);
+            throw new Error(`Failed to delete bookmarks_tags: ${bookmarksTagsError.message}`);
+          }
+        }
+
+        // ブックマークを削除
+        const { error: deleteBookmarksError } = await supabase
+          .from('bookmarks')
+          .delete()
+          .eq('user_id', session.user.id);
+
+        if (deleteBookmarksError) {
+          console.error('Error deleting bookmarks:', deleteBookmarksError);
+          throw new Error(`Failed to delete bookmarks: ${deleteBookmarksError.message}`);
+        }
+
+        // タグを削除
+        const { error: tagsError } = await supabase
+          .from('tags')
+          .delete()
+          .eq('user_id', session.user.id);
+
+        if (tagsError) {
+          console.error('Error deleting tags:', tagsError);
+          throw new Error(`Failed to delete tags: ${tagsError.message}`);
+        }
+
+        // UIを更新
+        onBookmarksUpdate([]);
+        setIsMoreMenuOpen(false);
+      } catch (error) {
+        console.error('Error deleting all bookmarks and tags:', error);
+        alert(error instanceof Error ? error.message : 'ブックマークとタグの削除中にエラーが発生しました。');
+      }
     }
   };
 
