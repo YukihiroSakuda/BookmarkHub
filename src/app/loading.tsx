@@ -14,7 +14,7 @@ export default function LoadingScreen() {
   }, [router]);
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center">
+    <div className="fixed inset-0 flex items-center justify-center bg-white dark:bg-gray-900 text-black dark:text-white">
       <div className="flex flex-col items-center gap-8">
         <div className="relative">
           <div className="absolute inset-0 rounded-full blur-2xl opacity-50 animate-pulse-slow" />
@@ -30,7 +30,7 @@ export default function LoadingScreen() {
         </div>
         <div className="flex flex-col items-center gap-4">
           <h1 className="text-5xl font-bold">
-            Bookmarks
+            Book<span className="text-blue-500">marks</span>
           </h1>
           <p className="text-xl text-white/60">
             Keep your favorite links organized in style
