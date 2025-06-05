@@ -453,7 +453,7 @@ export function BookmarkHeader({
               onBookmarksUpdate(formattedBookmarks);
             } catch (error) {
               console.error("Error updating tag name:", error);
-              alert("タグ名の更新中にエラーが発生しました。");
+              alert("Error updating tag name");
               throw error;
             }
           }}
@@ -500,7 +500,7 @@ export function BookmarkHeader({
               onBookmarksUpdate(formattedBookmarks);
             } catch (error) {
               console.error("Error adding tag:", error);
-              alert("タグの追加中にエラーが発生しました。");
+              alert("Error adding tag");
               throw error;
             }
           }}
@@ -511,6 +511,23 @@ export function BookmarkHeader({
               } = await supabase.auth.getSession();
               if (!session) {
                 throw new Error("No active session");
+              }
+
+              // タグIDを取得
+              const tagObj = availableTags.find((t) => t.name === tag);
+              if (tagObj) {
+                // このタグIDを使っているタグルールを全て削除
+                const relatedRuleIds = tagRules
+                  .filter((r) => r.tagId === tagObj.id)
+                  .map((r) => r.id);
+                if (relatedRuleIds.length > 0) {
+                  await supabase
+                    .from("tag_rules")
+                    .delete()
+                    .in("id", relatedRuleIds)
+                    .eq("user_id", session.user.id);
+                  await onTagRulesChange();
+                }
               }
 
               // タグを削除
@@ -544,7 +561,7 @@ export function BookmarkHeader({
               onBookmarksUpdate(formattedBookmarks);
             } catch (error) {
               console.error("Error removing tag:", error);
-              alert("タグの削除中にエラーが発生しました。");
+              alert("Error removing tag");
               throw error;
             }
           }}
@@ -634,10 +651,10 @@ export function BookmarkHeader({
               onBookmarksUpdate(formattedBookmarks);
             } catch (error) {
               console.error("Error saving tag rule:", error);
-              alert("タグルールの保存中にエラーが発生しました。");
+              alert("Error saving tag rule");
             }
           }}
-          onDelete={async (ruleId: string) => {
+          onDelete={async (ruleId: string, removeTags: boolean) => {
             try {
               const {
                 data: { session },
@@ -646,6 +663,11 @@ export function BookmarkHeader({
                 throw new Error("No active session");
               }
 
+              // ルール内容を取得
+              const rule = tagRules.find((r) => r.id === ruleId);
+              if (!rule) throw new Error("Rule not found");
+
+              // ルール削除
               const { error } = await supabase
                 .from("tag_rules")
                 .delete()
@@ -654,10 +676,64 @@ export function BookmarkHeader({
 
               if (error) throw error;
 
+              // タグ付けも削除する場合
+              if (removeTags) {
+                // ブックマークを取得
+                const { data: bookmarks, error: bookmarksError } =
+                  await supabase
+                    .from("bookmarks")
+                    .select("id, title, url")
+                    .eq("user_id", session.user.id);
+                if (bookmarksError) throw bookmarksError;
+
+                const pattern = rule.pattern.toLowerCase();
+                const matchFn = (value: string) => {
+                  if (rule.matchType === "starts_with")
+                    return value.startsWith(pattern);
+                  if (rule.matchType === "contains")
+                    return value.includes(pattern);
+                  if (rule.matchType === "ends_with")
+                    return value.endsWith(pattern);
+                  return false;
+                };
+                const matched = bookmarks.filter((bm) => {
+                  const target = (
+                    rule.targetField === "title" ? bm.title : bm.url
+                  ).toLowerCase();
+                  return matchFn(target);
+                });
+                for (const bm of matched) {
+                  await supabase
+                    .from("bookmarks_tags")
+                    .delete()
+                    .eq("bookmark_id", bm.id)
+                    .eq("tag_id", rule.tagId);
+                }
+              }
+
               await onTagRulesChange();
+
+              // タグ情報を反映した最新のブックマーク一覧を取得
+              const { data: updatedBookmarks, error: fetchError } =
+                await supabase
+                  .from("bookmarks")
+                  .select(
+                    `
+                  *,
+                  bookmarks_tags (
+                    tags (
+                      name
+                    )
+                  )
+                `
+                  )
+                  .eq("user_id", session.user.id);
+              if (fetchError) throw fetchError;
+              const formattedBookmarks = updatedBookmarks.map(convertToUI);
+              onBookmarksUpdate(formattedBookmarks);
             } catch (error) {
               console.error("Error deleting tag rule:", error);
-              alert("タグルールの削除中にエラーが発生しました。");
+              alert("Error deleting tag rule");
             }
           }}
         />

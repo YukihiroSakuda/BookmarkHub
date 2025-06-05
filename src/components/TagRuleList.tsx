@@ -1,7 +1,7 @@
 import { Button } from "./Button";
 import { Tag } from "./Tag";
 import { TagRule } from "../types/tagRule";
-import { Pencil, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 
 interface Tag {
   id: string;
@@ -14,8 +14,7 @@ interface Tag {
 interface TagRuleListProps {
   rules: TagRule[];
   availableTags: Tag[];
-  onEdit: (rule: TagRule) => void;
-  onDelete: (ruleId: string) => void;
+  onDelete: (ruleId: string, removeTags: boolean) => void;
 }
 
 const getRuleSentence = (rule: TagRule, availableTags: Tag[]) => {
@@ -44,7 +43,6 @@ const getRuleSentence = (rule: TagRule, availableTags: Tag[]) => {
 export const TagRuleList = ({
   rules,
   availableTags,
-  onEdit,
   onDelete,
 }: TagRuleListProps) => {
   return (
@@ -56,20 +54,17 @@ export const TagRuleList = ({
         >
           <div className="flex justify-between items-start mb-2">
             <div>{getRuleSentence(rule, availableTags)}</div>
-            <div className="flex gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                icon={Pencil}
-                onClick={() => onEdit(rule)}
-              />
-              <Button
-                variant="ghost"
-                size="sm"
-                icon={Trash2}
-                onClick={() => onDelete(rule.id)}
-              />
-            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              icon={Trash2}
+              onClick={() => {
+                const removeTags = window.confirm(
+                  "Do you want to remove the tags added by this rule? (Cancel to delete only the rule)"
+                );
+                onDelete(rule.id, removeTags);
+              }}
+            />
           </div>
         </div>
       ))}

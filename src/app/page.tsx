@@ -273,7 +273,7 @@ export default function Home() {
       }
     };
     fetchBookmarksAndTags();
-  }, []);
+  }, [fetchTagRules]);
 
   const handleSave = async (bookmarkData: Omit<BookmarkUI, "id">) => {
     try {

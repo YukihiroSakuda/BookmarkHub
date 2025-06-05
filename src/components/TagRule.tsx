@@ -18,7 +18,7 @@ interface TagRuleProps {
   rules: TagRuleType[];
   availableTags: Tag[];
   onSave: (data: TagRuleFormData) => Promise<void>;
-  onDelete: (ruleId: string) => Promise<void>;
+  onDelete: (ruleId: string, removeTags: boolean) => Promise<void>;
 }
 
 export const TagRule = ({
@@ -37,15 +37,8 @@ export const TagRule = ({
     setEditingRule(undefined);
   };
 
-  const handleEdit = (rule: TagRuleType) => {
-    setEditingRule(rule);
-    setIsFormOpen(true);
-  };
-
-  const handleDelete = async (ruleId: string) => {
-    if (window.confirm("このルールを削除してもよろしいですか？")) {
-      await onDelete(ruleId);
-    }
+  const handleDelete = async (ruleId: string, removeTags: boolean) => {
+    await onDelete(ruleId, removeTags);
   };
 
   return (
@@ -80,7 +73,6 @@ export const TagRule = ({
               <TagRuleList
                 rules={rules}
                 availableTags={availableTags}
-                onEdit={handleEdit}
                 onDelete={handleDelete}
               />
             </>
