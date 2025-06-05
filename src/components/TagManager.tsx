@@ -1,27 +1,35 @@
-import { SquarePen, Trash2, X } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { Button } from './Button';
-import { Input } from './Input';
+import { SquarePen, Trash2, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Button } from "./Button";
+import { Input } from "./Input";
+
+interface Tag {
+  id: string;
+  name: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+}
 
 interface TagManagerProps {
-  availableTags: string[];
+  availableTags: Tag[];
   onClose: () => void;
   onUpdateTagName: (oldName: string, newName: string) => Promise<void>;
   onAddTag: (tag: string) => Promise<void>;
   onRemoveTag: (tag: string) => Promise<void>;
 }
 
-export function TagManager({ 
-  availableTags, 
-  onClose, 
+export function TagManager({
+  availableTags,
+  onClose,
   onUpdateTagName,
   onAddTag,
-  onRemoveTag 
+  onRemoveTag,
 }: TagManagerProps) {
-  const [tags, setTags] = useState<string[]>([]);
-  const [newTag, setNewTag] = useState('');
-  const [editingTag, setEditingTag] = useState<string | null>(null);
-  const [editValue, setEditValue] = useState('');
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [newTag, setNewTag] = useState("");
+  const [editingTag, setEditingTag] = useState<Tag | null>(null);
+  const [editValue, setEditValue] = useState("");
 
   useEffect(() => {
     setTags([...availableTags]);
@@ -30,61 +38,63 @@ export function TagManager({
   const handleAddTag = async () => {
     const normalizedTag = newTag.trim();
     if (!normalizedTag) {
-      console.log('Tag is empty after trimming');
+      console.log("Tag is empty after trimming");
       return;
     }
-
-    const isDuplicate = tags.some(tag => 
-      tag.toLowerCase() === normalizedTag.toLowerCase()
+    const isDuplicate = tags.some(
+      (tag) => tag.name.toLowerCase() === normalizedTag.toLowerCase()
     );
-    
     if (!isDuplicate) {
       try {
         await onAddTag(normalizedTag);
-        setTags([...tags, normalizedTag]);
-        setNewTag('');
+        // タグ追加後はfetchで再取得される想定
+        setNewTag("");
       } catch (error) {
-        console.error('Error adding tag:', error);
-        alert('タグの追加中にエラーが発生しました。');
+        console.error("Error adding tag:", error);
+        alert("タグの追加中にエラーが発生しました。");
       }
     } else {
-      console.log('Tag not added - duplicate or empty');
+      console.log("Tag not added - duplicate or empty");
     }
   };
 
-  const handleRemoveTag = async (tagToRemove: string) => {
-    if (window.confirm(`Are you sure you want to delete the tag "${tagToRemove}"?`)) {
+  const handleRemoveTag = async (tagToRemove: Tag) => {
+    if (
+      window.confirm(
+        `Are you sure you want to delete the tag "${tagToRemove.name}"?`
+      )
+    ) {
       try {
-        await onRemoveTag(tagToRemove);
-        setTags(tags.filter(tag => tag !== tagToRemove));
+        await onRemoveTag(tagToRemove.name);
+        // タグ削除後はfetchで再取得される想定
       } catch (error) {
-        console.error('Error removing tag:', error);
-        alert('タグの削除中にエラーが発生しました。');
+        console.error("Error removing tag:", error);
+        alert("タグの削除中にエラーが発生しました。");
       }
     }
   };
 
-  const handleStartEdit = (tag: string) => {
+  const handleStartEdit = (tag: Tag) => {
     setEditingTag(tag);
-    setEditValue(tag);
+    setEditValue(tag.name);
   };
 
   const handleSaveEdit = async () => {
     const normalizedEditValue = editValue.trim();
     if (editingTag && normalizedEditValue) {
-      const isDuplicate = tags.some(tag => 
-        tag !== editingTag && tag.toLowerCase() === normalizedEditValue.toLowerCase()
+      const isDuplicate = tags.some(
+        (tag) =>
+          tag.id !== editingTag.id &&
+          tag.name.toLowerCase() === normalizedEditValue.toLowerCase()
       );
-      
       if (!isDuplicate) {
         try {
-          await onUpdateTagName(editingTag, normalizedEditValue);
-          setTags(tags.map(tag => tag === editingTag ? normalizedEditValue : tag));
+          await onUpdateTagName(editingTag.name, normalizedEditValue);
           setEditingTag(null);
-          setEditValue('');
+          setEditValue("");
         } catch (error) {
-          console.error('Error updating tag:', error);
-          alert('タグの更新中にエラーが発生しました。');
+          console.error("Error updating tag:", error);
+          alert("タグの更新中にエラーが発生しました。");
         }
       }
     }
@@ -92,7 +102,7 @@ export function TagManager({
 
   const handleCancelEdit = () => {
     setEditingTag(null);
-    setEditValue('');
+    setEditValue("");
   };
 
   return (
@@ -103,12 +113,7 @@ export function TagManager({
             <span className="text-blue-500">#</span>
             Tag Manager
           </h2>
-          <Button
-            onClick={onClose}
-            variant="ghost"
-            size="sm"
-            icon={X}
-          />
+          <Button onClick={onClose} variant="ghost" size="sm" icon={X} />
         </div>
 
         <div className="flex-1 overflow-y-auto pr-2 space-y-4">
@@ -129,19 +134,17 @@ export function TagManager({
               </Button>
             </div>
 
-            <label className="block text-sm font-medium mb-1">
-              Your Tags
-            </label>
-            
+            <label className="block text-sm font-medium mb-1">Your Tags</label>
+
             <div className="flex flex-col gap-2">
               {tags
-                .sort((a, b) => a.localeCompare(b))
+                .sort((a, b) => a.name.localeCompare(b.name))
                 .map((tag) => (
                   <div
-                    key={tag}
+                    key={tag.id}
                     className="flex items-center justify-between p-2 bg-neutral-100 dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-600"
                   >
-                    {editingTag === tag ? (
+                    {editingTag && editingTag.id === tag.id ? (
                       <div className="flex-1 flex gap-2">
                         <Input
                           value={editValue}
@@ -165,7 +168,7 @@ export function TagManager({
                       </div>
                     ) : (
                       <>
-                        <span className="text-sm">{tag}</span>
+                        <span className="text-sm">{tag.name}</span>
                         <div className="flex items-center gap-1">
                           <Button
                             onClick={() => handleStartEdit(tag)}
@@ -185,21 +188,15 @@ export function TagManager({
                   </div>
                 ))}
             </div>
-      
           </div>
         </div>
 
         <div className="flex justify-end gap-2 mt-4">
-          <Button
-            type="button"
-            onClick={onClose}
-            variant="secondary"
-            size="md"
-          >
+          <Button type="button" onClick={onClose} variant="secondary" size="md">
             Close
           </Button>
         </div>
       </div>
     </div>
   );
-} 
+}

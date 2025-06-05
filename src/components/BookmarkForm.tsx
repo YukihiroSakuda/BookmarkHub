@@ -1,23 +1,37 @@
-import { BookmarkUI } from '@/types/bookmark';
-import { X, Clock, TrendingUp } from 'lucide-react';
-import { useState } from 'react';
-import { Button } from './Button';
-import { Tag } from './Tag';
-import { Input } from './Input';
+import { BookmarkUI } from "@/types/bookmark";
+import { X, Clock, TrendingUp } from "lucide-react";
+import { useState } from "react";
+import { Button } from "./Button";
+import { Tag } from "./Tag";
+import { Input } from "./Input";
+
+interface Tag {
+  id: string;
+  name: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+}
 
 interface BookmarkFormProps {
   bookmark?: BookmarkUI;
   onClose: () => void;
-  onSave: (bookmarkData: Omit<BookmarkUI, 'id'>) => void;
-  availableTags: string[];
+  onSave: (bookmarkData: Omit<BookmarkUI, "id">) => void;
+  availableTags: Tag[];
   onUpdateTags: (tags: string[]) => void;
 }
 
-export function BookmarkForm({ bookmark, onClose, onSave, availableTags, onUpdateTags }: BookmarkFormProps) {
-  const [title, setTitle] = useState(bookmark?.title || '');
-  const [url, setUrl] = useState(bookmark?.url || '');
+export function BookmarkForm({
+  bookmark,
+  onClose,
+  onSave,
+  availableTags,
+  onUpdateTags,
+}: BookmarkFormProps) {
+  const [title, setTitle] = useState(bookmark?.title || "");
+  const [url, setUrl] = useState(bookmark?.url || "");
   const [tags, setTags] = useState<string[]>(bookmark?.tags || []);
-  const [newTag, setNewTag] = useState('');
+  const [newTag, setNewTag] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,10 +48,8 @@ export function BookmarkForm({ bookmark, onClose, onSave, availableTags, onUpdat
   };
 
   const handleTagClick = (tag: string) => {
-    setTags(prev => 
-      prev.includes(tag)
-        ? prev.filter(t => t !== tag)
-        : [...prev, tag]
+    setTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
     );
   };
 
@@ -45,21 +57,21 @@ export function BookmarkForm({ bookmark, onClose, onSave, availableTags, onUpdat
     if (!tag.trim()) return;
     if (!tags.includes(tag)) {
       setTags([...tags, tag]);
-      if (!availableTags.includes(tag)) {
-        onUpdateTags([...availableTags, tag]);
+      if (!availableTags.some((t) => t.name === tag)) {
+        onUpdateTags([...availableTags.map((t) => t.name), tag]);
       }
     }
-    setNewTag('');
+    setNewTag("");
   };
 
   const formatDate = (dateString: string | undefined) => {
-    if (!dateString) return 'Never';
-    return new Date(dateString).toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    if (!dateString) return "Never";
+    return new Date(dateString).toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -69,14 +81,9 @@ export function BookmarkForm({ bookmark, onClose, onSave, availableTags, onUpdat
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">
             <span className="text-blue-500">#</span>
-            {bookmark ? 'Edit Your Bookmark' : 'Add New Bookmark'}
+            {bookmark ? "Edit Your Bookmark" : "Add New Bookmark"}
           </h2>
-          <Button
-            onClick={onClose}
-            variant="ghost"
-            size="sm"
-            icon={X}
-          />
+          <Button onClick={onClose} variant="ghost" size="sm" icon={X} />
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -98,9 +105,7 @@ export function BookmarkForm({ bookmark, onClose, onSave, availableTags, onUpdat
           />
 
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Tags
-            </label>
+            <label className="block text-sm font-medium mb-1">Tags</label>
             <div className="flex gap-2">
               <Input
                 value={newTag}
@@ -124,10 +129,10 @@ export function BookmarkForm({ bookmark, onClose, onSave, availableTags, onUpdat
               <div className="flex flex-wrap gap-1.5">
                 {availableTags.map((tag) => (
                   <Tag
-                    key={tag}
-                    tag={tag}
-                    isSelected={tags.includes(tag)}
-                    onClick={() => handleTagClick(tag)}
+                    key={tag.id}
+                    tag={tag.name}
+                    isSelected={tags.includes(tag.name)}
+                    onClick={() => handleTagClick(tag.name)}
                   />
                 ))}
               </div>
@@ -147,7 +152,9 @@ export function BookmarkForm({ bookmark, onClose, onSave, availableTags, onUpdat
               {bookmark.lastAccessedAt && (
                 <div className="flex items-center gap-2 text-sm text-white/70">
                   <Clock size={16} />
-                  <span>Last Accessed: {formatDate(bookmark.lastAccessedAt)}</span>
+                  <span>
+                    Last Accessed: {formatDate(bookmark.lastAccessedAt)}
+                  </span>
                 </div>
               )}
             </div>
@@ -162,16 +169,12 @@ export function BookmarkForm({ bookmark, onClose, onSave, availableTags, onUpdat
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              size="md"
-            >
-              {bookmark ? 'Save Changes' : 'Add Bookmark'}
+            <Button type="submit" variant="primary" size="md">
+              {bookmark ? "Save Changes" : "Add Bookmark"}
             </Button>
           </div>
         </form>
       </div>
     </div>
   );
-} 
+}
