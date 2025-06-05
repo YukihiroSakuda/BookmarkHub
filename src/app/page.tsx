@@ -339,6 +339,13 @@ export default function Home() {
       }
 
       // タグの保存
+      // 既存のbookmarks_tagsを必ず削除
+      const { error: deleteError } = await supabase
+        .from("bookmarks_tags")
+        .delete()
+        .eq("bookmark_id", bookmarkId);
+      if (deleteError) throw deleteError;
+
       if (mergedTags.length > 0) {
         // 既存のタグを取得
         const { data: existingTags, error: tagsError } = await supabase
@@ -370,14 +377,6 @@ export default function Home() {
           if (insertError) throw insertError;
           existingTags.push(...insertedTags);
         }
-
-        // 既存のbookmarks_tagsを削除
-        const { error: deleteError } = await supabase
-          .from("bookmarks_tags")
-          .delete()
-          .eq("bookmark_id", bookmarkId);
-
-        if (deleteError) throw deleteError;
 
         // 新しいbookmarks_tagsを作成
         const { error: insertError } = await supabase
