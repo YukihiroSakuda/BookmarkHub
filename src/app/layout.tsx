@@ -25,7 +25,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
-      <body className={`${outfit.variable} ${notoSansJP.variable} font-sans antialiased bg-neutral-100 text-black dark:bg-black dark:text-white`}>{children}</body>
+      <body
+        className={`${outfit.variable} ${notoSansJP.variable} font-sans antialiased bg-neutral-100 text-black dark:bg-black dark:text-white`}
+      >
+        {children}
+      </body>
     </html>
   );
 }

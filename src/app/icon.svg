@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7C3AED;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="bookmarkGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#60A5FA;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1D4ED8;stop-opacity:1" />
+    </linearGradient>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@600&amp;display=swap');
+    </style>
+  </defs>
+  
+
+  
+  <!-- Bookmark icon -->
+  <path d="M4 3c0-1.1.9-2 2-2h20c1.1 0 2 .9 2 2v26l-12-6-12 6V3z" 
+        fill="url(#bookmarkGradient)" 
+        stroke="url(#bookmarkGradient)" 
+        stroke-width="0.4"/>
+  
+  <!-- Letter "B" -->
+  <text x="16" y="20" 
+        font-family="'Outfit', sans-serif" 
+        font-size="18" 
+        font-weight="600" 
+        text-anchor="middle" 
+        fill="white">B</text>
+</svg>
