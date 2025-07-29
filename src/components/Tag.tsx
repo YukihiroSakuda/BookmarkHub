@@ -1,4 +1,5 @@
 import { X } from "lucide-react";
+import { memo, useCallback } from "react";
 
 interface TagProps {
   tag: string;
@@ -7,7 +8,13 @@ interface TagProps {
   isSelected?: boolean;
 }
 
-export function Tag({ tag, onDelete, onClick, isSelected }: TagProps) {
+const Tag = memo(function Tag({ tag, onDelete, onClick, isSelected }: TagProps) {
+  const handleDeleteClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onDelete) {
+      onDelete();
+    }
+  }, [onDelete]);
   return (
     <div
       className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${
@@ -22,10 +29,7 @@ export function Tag({ tag, onDelete, onClick, isSelected }: TagProps) {
       {tag}
       {onDelete && (
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete();
-          }}
+          onClick={handleDeleteClick}
           className="ml-1"
         >
           <X size={12} />
@@ -33,4 +37,6 @@ export function Tag({ tag, onDelete, onClick, isSelected }: TagProps) {
       )}
     </div>
   );
-}
+});
+
+export { Tag };

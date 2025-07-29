@@ -2,7 +2,7 @@ import { BookmarkUI } from '@/types/bookmark';
 import { Trash2, Pin, SquarePen, Globe } from 'lucide-react';
 import { Button } from './Button';
 import { Tag } from './Tag';
-import { useState } from 'react';
+import { useState, memo, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 
 interface BookmarkCardProps {
@@ -14,7 +14,7 @@ interface BookmarkCardProps {
   onClick: () => void;
 }
 
-export function BookmarkCard({ 
+const BookmarkCard = memo(function BookmarkCard({ 
   bookmark, 
   viewMode, 
   onTogglePin, 
@@ -22,7 +22,7 @@ export function BookmarkCard({
   onDelete,
   onClick
 }: BookmarkCardProps) {
-  const getFaviconUrl = (url: string) => {
+  const getFaviconUrl = useCallback((url: string) => {
     try {
       const urlObj = new URL(url);
       // 内部ネットワークのURLや特殊なドメインの場合は空文字を返す
@@ -37,10 +37,19 @@ export function BookmarkCard({
     } catch {
       return '';
     }
-  };
+  }, []);
 
-  function FaviconDisplay({ url }: { url: string }) {
+  const sortedTags = useMemo(() => 
+    bookmark.tags.sort((a, b) => a.localeCompare(b)), 
+    [bookmark.tags]
+  );
+
+  const faviconUrl = useMemo(() => getFaviconUrl(bookmark.url), [bookmark.url, getFaviconUrl]);
+
+  const FaviconDisplay = memo(function FaviconDisplay({ url }: { url: string }) {
     const [showFallback, setShowFallback] = useState(false);
+
+    const handleError = useCallback(() => setShowFallback(true), []);
 
     if (!url || showFallback) {
       return <Globe className="size-4 text-black dark:text-white" />;
@@ -54,11 +63,11 @@ export function BookmarkCard({
           width={16}
           height={16}
           className="rounded-sm"
-          onError={() => setShowFallback(true)}
+          onError={handleError}
         />
       </div>
     );
-  }
+  });
 
   return (
     <div
@@ -71,7 +80,7 @@ export function BookmarkCard({
       {viewMode === 'list' ? (
         // List View Layout
         <div className="flex items-center flex-1 min-w-0 gap-2">
-          <FaviconDisplay url={getFaviconUrl(bookmark.url)} />
+          <FaviconDisplay url={faviconUrl} />
           <a
             href={bookmark.url}
             target="_blank"
@@ -87,11 +96,9 @@ export function BookmarkCard({
             </h3>
           </a>
           <div className="flex items-center flex-wrap gap-1.5 overflow-hidden">
-            {bookmark.tags
-              .sort((a, b) => a.localeCompare(b))
-              .map((tag) => (
-                <Tag key={tag} tag={tag} isSelected={true} />
-              ))}
+            {sortedTags.map((tag) => (
+              <Tag key={tag} tag={tag} isSelected={true} />
+            ))}
           </div>
           <div className="flex items-center justify-end space-x-2">
             <Button
@@ -140,17 +147,15 @@ export function BookmarkCard({
             }}
           >
             <div className="flex items-center gap-2 mb-1">
-              <FaviconDisplay url={getFaviconUrl(bookmark.url)} />
+              <FaviconDisplay url={faviconUrl} />
               <h3 className="font-medium text-energy-green text-sm truncate">
                 {bookmark.title}
               </h3>
             </div>
             <div className="flex flex-wrap gap-1.5 mt-2">
-              {bookmark.tags
-                .sort((a, b) => a.localeCompare(b))
-                .map((tag) => (
-                  <Tag key={tag} tag={tag} isSelected={true} />
-                ))}
+              {sortedTags.map((tag) => (
+                <Tag key={tag} tag={tag} isSelected={true} />
+              ))}
             </div>
           </a>
           <div className="flex items-center justify-end space-x-2 mt-3 pt-3 border-t border-neutral-200 dark:border-neutral-600 -mx-4 -mb-4 px-4 py-3 rounded-b-xl">
@@ -189,4 +194,6 @@ export function BookmarkCard({
       )}
     </div>
   );
-} 
+});
+
+export { BookmarkCard }; 

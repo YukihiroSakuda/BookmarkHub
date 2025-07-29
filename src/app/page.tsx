@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { BookmarkList } from "@/components/BookmarkList";
 import { BookmarkHeader } from "@/components/BookmarkHeader";
@@ -151,7 +151,7 @@ export default function Home() {
     },
   });
 
-  const handleBookmarksUpdate = async (updatedBookmarks: BookmarkUI[]) => {
+  const handleBookmarksUpdate = useCallback(async (updatedBookmarks: BookmarkUI[]) => {
     setBookmarks(updatedBookmarks);
 
     // タグ一覧を更新
@@ -174,7 +174,7 @@ export default function Home() {
     } catch (error) {
       console.error("Error updating tags:", error);
     }
-  };
+  }, []);
 
   // タグを取得する関数
   const fetchTags = async () => {
@@ -424,12 +424,12 @@ export default function Home() {
     }
   };
 
-  const handleEdit = (bookmark: BookmarkUI) => {
+  const handleEdit = useCallback((bookmark: BookmarkUI) => {
     setSelectedBookmark(bookmark);
     setIsModalOpen(true);
-  };
+  }, []);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = useCallback(async (id: string) => {
     try {
       const {
         data: { session },
@@ -470,9 +470,9 @@ export default function Home() {
       console.error("Error deleting bookmark:", error);
       alert("ブックマークの削除中にエラーが発生しました。");
     }
-  };
+  }, [handleBookmarksUpdate]);
 
-  const handleTogglePin = async (id: string) => {
+  const handleTogglePin = useCallback(async (id: string) => {
     try {
       const {
         data: { session },
@@ -516,13 +516,13 @@ export default function Home() {
       console.error("Error toggling pin:", error);
       alert("ブックマークのピン状態の更新中にエラーが発生しました。");
     }
-  };
+  }, [bookmarks, handleBookmarksUpdate]);
 
-  const handleTagClick = (tag: string) => {
+  const handleTagClick = useCallback((tag: string) => {
     setSelectedTags((prev) =>
       prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
     );
-  };
+  }, []);
 
   const handleUpdateTags = async (tags: string[]) => {
     try {
@@ -627,7 +627,7 @@ export default function Home() {
     }
   };
 
-  const handleBookmarkClick = async (bookmark: BookmarkUI) => {
+  const handleBookmarkClick = useCallback(async (bookmark: BookmarkUI) => {
     try {
       const {
         data: { session },
@@ -671,10 +671,21 @@ export default function Home() {
       console.error("Error updating bookmark access:", error);
       // エラー処理を追加
     }
-  };
+  }, [handleBookmarksUpdate]);
 
-  const sortBookmarks = (bookmarks: BookmarkUI[]) => {
-    return [...bookmarks].sort((a, b) => {
+
+  const filteredAndSortedBookmarks = useMemo(() => {
+    const filtered = bookmarks.filter((bookmark) => {
+      const matchesSearch = bookmark.title
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      const matchesTags =
+        selectedTags.length === 0 ||
+        selectedTags.some((tag) => bookmark.tags.includes(tag));
+      return matchesSearch && matchesTags;
+    });
+
+    const sorted = [...filtered].sort((a, b) => {
       let comparison = 0;
       switch (currentSort) {
         case "accessCount":
@@ -690,21 +701,12 @@ export default function Home() {
       }
       return currentOrder === "asc" ? comparison : -comparison;
     });
-  };
 
-  const filteredBookmarks = bookmarks.filter((bookmark) => {
-    const matchesSearch = bookmark.title
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    const matchesTags =
-      selectedTags.length === 0 ||
-      selectedTags.some((tag) => bookmark.tags.includes(tag));
-    return matchesSearch && matchesTags;
-  });
-
-  const sortedBookmarks = sortBookmarks(filteredBookmarks);
-  const pinnedBookmarks = sortedBookmarks.filter((b) => b.isPinned);
-  const unpinnedBookmarks = sortedBookmarks.filter((b) => !b.isPinned);
+    return {
+      pinned: sorted.filter((b) => b.isPinned),
+      unpinned: sorted.filter((b) => !b.isPinned)
+    };
+  }, [bookmarks, searchQuery, selectedTags, currentSort, currentOrder]);
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -748,8 +750,8 @@ export default function Home() {
           </div>
 
           <BookmarkList
-            pinnedBookmarks={pinnedBookmarks}
-            unpinnedBookmarks={unpinnedBookmarks}
+            pinnedBookmarks={filteredAndSortedBookmarks.pinned}
+            unpinnedBookmarks={filteredAndSortedBookmarks.unpinned}
             viewMode={viewMode}
             onTogglePin={handleTogglePin}
             onEdit={handleEdit}
