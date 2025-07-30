@@ -12,6 +12,7 @@ import {
   User,
   LogOut,
   BookOpenCheck,
+  Columns,
 } from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { TagManager } from "./TagManager";
@@ -36,6 +37,8 @@ interface Tag {
 interface BookmarkHeaderProps {
   viewMode: "list" | "grid";
   onViewModeChange: (mode: "list" | "grid") => void;
+  listColumns: 1 | 2 | 3 | 4;
+  onListColumnsChange: (columns: 1 | 2 | 3 | 4) => void;
   selectedTags: string[];
   onAddBookmark: () => void;
   searchQuery: string;
@@ -52,6 +55,8 @@ interface BookmarkHeaderProps {
 export function BookmarkHeader({
   viewMode,
   onViewModeChange,
+  listColumns,
+  onListColumnsChange,
   selectedTags,
   onAddBookmark,
   searchQuery,
@@ -69,9 +74,11 @@ export function BookmarkHeader({
   const [isTagRuleOpen, setIsTagRuleOpen] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isColumnsMenuOpen, setIsColumnsMenuOpen] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const moreMenuRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
+  const columnsMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // ユーザー情報の取得
@@ -95,6 +102,12 @@ export function BookmarkHeader({
         !userMenuRef.current.contains(event.target as Node)
       ) {
         setIsUserMenuOpen(false);
+      }
+      if (
+        columnsMenuRef.current &&
+        !columnsMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsColumnsMenuOpen(false);
       }
     }
 
@@ -289,6 +302,38 @@ export function BookmarkHeader({
               size="lg"
               icon={viewMode === "grid" ? List : Grid}
             />
+            {viewMode === "list" && (
+              <div className="relative" ref={columnsMenuRef}>
+                <Button
+                  onClick={() => setIsColumnsMenuOpen(!isColumnsMenuOpen)}
+                  variant="secondary"
+                  size="lg"
+                  icon={Columns}
+                />
+                {isColumnsMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 text-neutral-400 bg-white dark:bg-black backdrop-blur-sm rounded-lg border shadow-lg py-1 z-50">
+                    <div className="px-4 py-2 text-xs font-medium text-neutral-500 border-b border-neutral-200 dark:border-neutral-700">
+                      List Columns
+                    </div>
+                    {[1, 2, 3, 4].map((columns) => (
+                      <button
+                        key={columns}
+                        className={`w-full px-4 py-2 text-left text-sm hover:text-black hover:dark:text-white flex items-center gap-2 ${
+                          listColumns === columns ? 'text-blue-500' : ''
+                        }`}
+                        onClick={() => {
+                          onListColumnsChange(columns as 1 | 2 | 3 | 4);
+                          setIsColumnsMenuOpen(false);
+                        }}
+                      >
+                        {columns} Column{columns > 1 ? 's' : ''}
+                        {listColumns === columns && <span className="ml-auto">✓</span>}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
             <div className="relative" ref={moreMenuRef}>
               <Button
                 onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}

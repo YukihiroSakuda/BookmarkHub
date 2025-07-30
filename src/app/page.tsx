@@ -13,6 +13,7 @@ import { cn } from "@/utils/ui";
 import { supabase } from "@/lib/supabaseClient";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { TagRule } from "@/types/tagRule";
+import { UserSettingsUI, convertUserSettingsToUI, convertUserSettingsToDB } from "@/types/userSettings";
 
 interface Tag {
   id: string;
@@ -44,6 +45,8 @@ export default function Home() {
   const [isVisible, setIsVisible] = useState(false);
   const [bookmarks, setBookmarks] = useState<BookmarkUI[]>([]);
   const [viewMode, setViewMode] = useState<"list" | "grid">("grid");
+  const [listColumns, setListColumns] = useState<1 | 2 | 3 | 4>(4);
+  const [userSettings, setUserSettings] = useState<UserSettingsUI | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBookmark, setSelectedBookmark] = useState<
     BookmarkUI | undefined
@@ -202,6 +205,91 @@ export default function Home() {
     }
   };
 
+  // ユーザ設定を保存する関数
+  const saveUserSettings = useCallback(async (settings: UserSettingsUI) => {
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error("No active session");
+      }
+
+      const dbSettings = convertUserSettingsToDB(settings, session.user.id);
+
+      const { error } = await supabase
+        .from("user_settings")
+        .upsert([dbSettings], { 
+          onConflict: 'user_id'
+        });
+
+      if (error) throw error;
+
+      setUserSettings(settings);
+    } catch (error) {
+      console.error("Error saving user settings:", error);
+    }
+  }, []);
+
+  // ユーザ設定を取得する関数
+  const fetchUserSettings = useCallback(async () => {
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error("No active session");
+      }
+
+      const { data: settings, error } = await supabase
+        .from("user_settings")
+        .select("*")
+        .eq("user_id", session.user.id)
+        .single();
+
+      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
+        throw error;
+      }
+
+      if (settings) {
+        const uiSettings = convertUserSettingsToUI(settings);
+        setUserSettings(uiSettings);
+        setViewMode(uiSettings.displayMode);
+        setListColumns(uiSettings.listColumns);
+      } else {
+        // デフォルト設定で新規作成
+        const defaultSettings: UserSettingsUI = {
+          displayMode: "grid",
+          listColumns: 4
+        };
+        
+        // 直接DBに保存（循環依存を避けるため）
+        const dbSettings = convertUserSettingsToDB(defaultSettings, session.user.id);
+        const { error: insertError } = await supabase
+          .from("user_settings")
+          .upsert([dbSettings], { 
+            onConflict: 'user_id'
+          });
+        
+        if (insertError) throw insertError;
+
+        setUserSettings(defaultSettings);
+        setViewMode(defaultSettings.displayMode);
+        setListColumns(defaultSettings.listColumns);
+      }
+    } catch (error) {
+      console.error("Error fetching user settings:", error);
+      // エラー時はデフォルト値を設定
+      const defaultSettings: UserSettingsUI = {
+        displayMode: "grid",
+        listColumns: 4
+      };
+      setUserSettings(defaultSettings);
+      setViewMode(defaultSettings.displayMode);
+      setListColumns(defaultSettings.listColumns);
+    }
+  }, []);
+
   // タグルールを取得する関数
   const fetchTagRules = useCallback(async () => {
     try {
@@ -241,6 +329,9 @@ export default function Home() {
           throw new Error("No active session");
         }
 
+        // ユーザ設定を取得
+        await fetchUserSettings();
+
         // タグを取得
         await fetchTags();
 
@@ -273,7 +364,7 @@ export default function Home() {
       }
     };
     fetchBookmarksAndTags();
-  }, [fetchTagRules]);
+  }, [fetchTagRules, fetchUserSettings, handleBookmarksUpdate]);
 
   const handleSave = async (bookmarkData: Omit<BookmarkUI, "id">) => {
     try {
@@ -723,7 +814,21 @@ export default function Home() {
         <div className="w-full">
           <BookmarkHeader
             viewMode={viewMode}
-            onViewModeChange={setViewMode}
+            onViewModeChange={async (mode) => {
+              setViewMode(mode);
+              if (userSettings) {
+                const newSettings = { ...userSettings, displayMode: mode };
+                await saveUserSettings(newSettings);
+              }
+            }}
+            listColumns={listColumns}
+            onListColumnsChange={async (columns) => {
+              setListColumns(columns);
+              if (userSettings) {
+                const newSettings = { ...userSettings, listColumns: columns };
+                await saveUserSettings(newSettings);
+              }
+            }}
             selectedTags={selectedTags}
             onAddBookmark={() => {
               setSelectedBookmark(undefined);
@@ -753,6 +858,7 @@ export default function Home() {
             pinnedBookmarks={filteredAndSortedBookmarks.pinned}
             unpinnedBookmarks={filteredAndSortedBookmarks.unpinned}
             viewMode={viewMode}
+            listColumns={listColumns}
             onTogglePin={handleTogglePin}
             onEdit={handleEdit}
             onDelete={handleDelete}
