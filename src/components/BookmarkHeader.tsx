@@ -12,7 +12,7 @@ import {
   User,
   LogOut,
   BookOpenCheck,
-  Columns,
+  Columns4,
 } from "lucide-react";
 import { useState, useRef, useEffect, useCallback } from "react";
 import { TagManager } from "./TagManager";
@@ -308,7 +308,7 @@ export function BookmarkHeader({
                   onClick={() => setIsColumnsMenuOpen(!isColumnsMenuOpen)}
                   variant="secondary"
                   size="lg"
-                  icon={Columns}
+                  icon={Columns4}
                 />
                 {isColumnsMenuOpen && (
                   <div className="absolute right-0 mt-2 w-48 text-neutral-400 bg-white dark:bg-black backdrop-blur-sm rounded-lg border shadow-lg py-1 z-50">
@@ -319,15 +319,17 @@ export function BookmarkHeader({
                       <button
                         key={columns}
                         className={`w-full px-4 py-2 text-left text-sm hover:text-black hover:dark:text-white flex items-center gap-2 ${
-                          listColumns === columns ? 'text-blue-500' : ''
+                          listColumns === columns ? "text-blue-500" : ""
                         }`}
                         onClick={() => {
                           onListColumnsChange(columns as 1 | 2 | 3 | 4);
                           setIsColumnsMenuOpen(false);
                         }}
                       >
-                        {columns} Column{columns > 1 ? 's' : ''}
-                        {listColumns === columns && <span className="ml-auto">✓</span>}
+                        {columns} Column{columns > 1 ? "s" : ""}
+                        {listColumns === columns && (
+                          <span className="ml-auto">✓</span>
+                        )}
                       </button>
                     ))}
                   </div>
