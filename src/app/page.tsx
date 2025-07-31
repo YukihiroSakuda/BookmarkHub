@@ -609,10 +609,24 @@ export default function Home() {
     }
   }, [bookmarks, handleBookmarksUpdate]);
 
-  const handleTagClick = useCallback((tag: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
-    );
+  const handleTagClick = useCallback((tag: string, ctrlKey: boolean = false) => {
+    setSelectedTags((prev) => {
+      if (ctrlKey) {
+        // Ctrl+クリック: 複数選択モード
+        return prev.includes(tag) 
+          ? prev.filter((t) => t !== tag) 
+          : [...prev, tag];
+      } else {
+        // 通常クリック: ラジオボタンモード
+        if (prev.includes(tag) && prev.length === 1) {
+          // 選択済みのタグが1つだけの場合は非選択にする
+          return [];
+        } else {
+          // そのタグのみを選択する
+          return [tag];
+        }
+      }
+    });
   }, []);
 
   const handleUpdateTags = async (tags: string[]) => {

@@ -4,7 +4,7 @@ import { memo, useCallback } from "react";
 interface TagProps {
   tag: string;
   onDelete?: () => void;
-  onClick?: () => void;
+  onClick?: (ctrlKey: boolean) => void;
   isSelected?: boolean;
 }
 
@@ -15,6 +15,13 @@ const Tag = memo(function Tag({ tag, onDelete, onClick, isSelected }: TagProps) 
       onDelete();
     }
   }, [onDelete]);
+
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    if (onClick) {
+      onClick(e.ctrlKey);
+    }
+  }, [onClick]);
+
   return (
     <div
       className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${
@@ -24,7 +31,7 @@ const Tag = memo(function Tag({ tag, onDelete, onClick, isSelected }: TagProps) 
           ? "bg-blue-500 text-white"
           : "bg-neutral-200 dark:bg-neutral-700"
       }`}
-      onClick={onClick}
+      onClick={handleClick}
     >
       {tag}
       {onDelete && (

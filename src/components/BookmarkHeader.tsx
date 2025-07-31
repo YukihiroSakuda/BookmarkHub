@@ -44,7 +44,7 @@ interface BookmarkHeaderProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   availableTags: Tag[];
-  onTagClick: (tag: string) => void;
+  onTagClick: (tag: string, ctrlKey?: boolean) => void;
   onClearAll: () => void;
   onBookmarksUpdate: (bookmarks: BookmarkUI[]) => void;
   bookmarks: BookmarkUI[];
@@ -410,7 +410,10 @@ export function BookmarkHeader({
           <div className="flex justify-between items-center mb-2">
             <div className="flex items-center gap-1.5">
               <h2 className="text-sm font-medium tracking-tight">
-                <span className="text-blue-500">#</span> Filter by Tags
+                <span className="text-blue-500">#</span> Filter by Tags{" "}
+                <span className="text-xs">
+                  (Ctrl + Click to select multiple tags)
+                </span>
               </h2>
               {selectedTags.length > 0 && (
                 <Button onClick={onClearAll} variant="ghost" size="sm" icon={X}>
@@ -448,7 +451,7 @@ export function BookmarkHeader({
                 <TagComponent
                   key={tag.id}
                   tag={tag.name}
-                  onClick={() => onTagClick(tag.name)}
+                  onClick={(ctrlKey) => onTagClick(tag.name, ctrlKey)}
                   isSelected={selectedTags.includes(tag.name)}
                 />
               ))}
