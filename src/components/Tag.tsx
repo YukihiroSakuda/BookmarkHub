@@ -6,30 +6,33 @@ interface TagProps {
   onDelete?: () => void;
   onClick?: (ctrlKey: boolean) => void;
   isSelected?: boolean;
+  isDisabled?: boolean;
 }
 
-const Tag = memo(function Tag({ tag, onDelete, onClick, isSelected }: TagProps) {
+const Tag = memo(function Tag({ tag, onDelete, onClick, isSelected, isDisabled = false }: TagProps) {
   const handleDeleteClick = useCallback((e: React.MouseEvent) => {
     e.stopPropagation();
-    if (onDelete) {
+    if (onDelete && !isDisabled) {
       onDelete();
     }
-  }, [onDelete]);
+  }, [onDelete, isDisabled]);
 
   const handleClick = useCallback((e: React.MouseEvent) => {
-    if (onClick) {
+    if (onClick && !isDisabled) {
       onClick(e.ctrlKey);
     }
-  }, [onClick]);
+  }, [onClick, isDisabled]);
 
   return (
     <div
       className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${
-        onClick ? "cursor-pointer" : ""
+        onClick && !isDisabled ? "cursor-pointer" : ""
       } ${
         isSelected
           ? "bg-blue-500 text-white"
           : "bg-neutral-200 dark:bg-neutral-700"
+      } ${
+        isDisabled ? "opacity-50 cursor-not-allowed" : ""
       }`}
       onClick={handleClick}
     >

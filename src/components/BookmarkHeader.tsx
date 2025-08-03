@@ -50,6 +50,7 @@ interface BookmarkHeaderProps {
   bookmarks: BookmarkUI[];
   tagRules: TagRuleType[];
   onTagRulesChange: () => Promise<void>;
+  isOrderingMode?: boolean;
 }
 
 export function BookmarkHeader({
@@ -68,6 +69,7 @@ export function BookmarkHeader({
   bookmarks,
   tagRules,
   onTagRulesChange,
+  isOrderingMode = false,
 }: BookmarkHeaderProps) {
   const router = useRouter();
   const [isTagManagerOpen, setIsTagManagerOpen] = useState(false);
@@ -277,7 +279,8 @@ export function BookmarkHeader({
               placeholder="Find your bookmarks..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="w-full px-3 py-2 pl-8 rounded-xl bg-neutral-200 dark:bg-neutral-800 text-black dark:text-white placeholder-neutral-400 focus:ring-2 focus:ring-blue-300 focus:ring-opacity-50 focus:outline-none text-base"
+              className="w-full px-3 py-2 pl-8 rounded-xl bg-neutral-200 dark:bg-neutral-800 text-black dark:text-white placeholder-neutral-400 focus:ring-2 focus:ring-blue-300 focus:ring-opacity-50 focus:outline-none text-base disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isOrderingMode}
             />
             <Search
               className="absolute left-2 top-1/2 transform -translate-y-1/2 text-neutral-400"
@@ -286,8 +289,9 @@ export function BookmarkHeader({
             {searchQuery && (
               <button
                 type="button"
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-white"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-slate-500 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={() => onSearchChange("")}
+                disabled={isOrderingMode}
               >
                 <X size={16} />
               </button>
@@ -301,6 +305,7 @@ export function BookmarkHeader({
               variant="secondary"
               size="lg"
               icon={viewMode === "grid" ? List : Grid}
+              disabled={isOrderingMode}
             />
             {viewMode === "list" && (
               <div className="relative" ref={columnsMenuRef}>
@@ -309,6 +314,7 @@ export function BookmarkHeader({
                   variant="secondary"
                   size="lg"
                   icon={Columns4}
+                  disabled={isOrderingMode}
                 />
                 {isColumnsMenuOpen && (
                   <div className="absolute right-0 mt-2 w-48 text-neutral-400 bg-white dark:bg-black backdrop-blur-sm rounded-lg border shadow-lg py-1 z-50">
@@ -342,6 +348,7 @@ export function BookmarkHeader({
                 variant="secondary"
                 size="lg"
                 icon={MoreVertical}
+                disabled={isOrderingMode}
               />
               {isMoreMenuOpen && (
                 <div className="absolute right-0 mt-2 w-48 text-neutral-400 bg-white dark:bg-black backdrop-blur-sm rounded-lg border shadow-lg py-1 z-50">
@@ -377,6 +384,7 @@ export function BookmarkHeader({
                 variant="secondary"
                 size="lg"
                 icon={User}
+                disabled={isOrderingMode}
               />
               {isUserMenuOpen && (
                 <div className="absolute right-0 mt-2 w-64 text-neutral-400 bg-white dark:bg-black backdrop-blur-sm rounded-lg border shadow-lg py-1 z-50">
@@ -398,6 +406,7 @@ export function BookmarkHeader({
               variant="primary"
               size="lg"
               icon={Plus}
+              disabled={isOrderingMode}
             >
               Add Bookmark
             </Button>
@@ -416,7 +425,13 @@ export function BookmarkHeader({
                 </span>
               </h2>
               {selectedTags.length > 0 && (
-                <Button onClick={onClearAll} variant="ghost" size="sm" icon={X}>
+                <Button
+                  onClick={onClearAll}
+                  variant="ghost"
+                  size="sm"
+                  icon={X}
+                  disabled={isOrderingMode}
+                >
                   Clear all tags
                 </Button>
               )}
@@ -428,6 +443,7 @@ export function BookmarkHeader({
                   variant="ghost"
                   size="sm"
                   icon={Tag}
+                  disabled={isOrderingMode}
                 >
                   Tag Manager
                 </Button>
@@ -438,6 +454,7 @@ export function BookmarkHeader({
                   variant="ghost"
                   size="sm"
                   icon={BookOpenCheck}
+                  disabled={isOrderingMode}
                 >
                   Tag Rule
                 </Button>
@@ -453,6 +470,7 @@ export function BookmarkHeader({
                   tag={tag.name}
                   onClick={(ctrlKey) => onTagClick(tag.name, ctrlKey)}
                   isSelected={selectedTags.includes(tag.name)}
+                  isDisabled={isOrderingMode}
                 />
               ))}
           </div>

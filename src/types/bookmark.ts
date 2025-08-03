@@ -9,6 +9,7 @@ export interface Bookmark {
   access_count: number;
   last_accessed_at?: string;
   user_id: string;
+  custom_order?: number;
 }
 
 // フロントエンド用の型（Supabaseのデータを変換する際に使用）
@@ -23,6 +24,7 @@ export interface BookmarkUI {
   favicon?: string;
   accessCount: number;
   lastAccessedAt?: string;
+  customOrder?: number;
 }
 
 export interface Settings {
@@ -32,7 +34,7 @@ export interface Settings {
   itemsPerPage: number;
 }
 
-export type SortOption = 'accessCount' | 'title' | 'createdAt';
+export type SortOption = 'accessCount' | 'title' | 'createdAt' | 'custom';
 export type SortOrder = 'asc' | 'desc';
 
 // Supabaseから取得したブックマークデータの型
@@ -46,6 +48,7 @@ export interface BookmarkWithTags {
   access_count: number;
   last_accessed_at: string | null;
   user_id: string;
+  custom_order?: number;
   bookmarks_tags: Array<{
     tags: {
       name: string;
@@ -63,7 +66,8 @@ export const convertToUI = (bookmark: BookmarkWithTags): BookmarkUI => ({
   createdAt: bookmark.created_at,
   updatedAt: bookmark.updated_at,
   accessCount: bookmark.access_count,
-  lastAccessedAt: bookmark.last_accessed_at || undefined
+  lastAccessedAt: bookmark.last_accessed_at || undefined,
+  customOrder: bookmark.custom_order
 });
 
 export const convertToDB = (bookmark: BookmarkUI, userId: string): Omit<Bookmark, 'id'> => ({
@@ -74,5 +78,6 @@ export const convertToDB = (bookmark: BookmarkUI, userId: string): Omit<Bookmark
   updated_at: bookmark.updatedAt,
   access_count: bookmark.accessCount,
   last_accessed_at: bookmark.lastAccessedAt,
-  user_id: userId
+  user_id: userId,
+  custom_order: bookmark.customOrder
 }); 

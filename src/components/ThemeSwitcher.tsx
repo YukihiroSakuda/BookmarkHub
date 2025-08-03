@@ -59,35 +59,33 @@ export default function ThemeSwitcher() {
   const isDark = currentTheme === 'dark';
 
   return (
-    <div className="fixed right-6 bottom-6 z-50">
-      <div className={`
-        ${isDark ? 'bg-neutral-800 border-neutral-700' : 'bg-white border-gray-200'}
-        rounded-full shadow-sm border flex items-center px-1.5 py-1.5 
-        min-w-[80px] justify-center gap-1 transition-colors duration-200
-      `}>
-        {themes.map((t) => {
-          const IconComponent = t.icon;
-          const isActive = theme === t.key;
-          
-          return (
-            <button
-              key={t.key}
-              aria-pressed={isActive}
-              onClick={() => handleChange(t.key)}
-              className={`
-                ${isDark 
-                  ? `${isActive ? 'bg-neutral-600' : 'hover:text-white'} ` 
-                  : `${isActive ? 'bg-gray-200' : 'hover:text-black'} `
-                }
-                border-none rounded-full p-2 cursor-pointer outline-none text-neutral-400
-                flex items-center justify-center
-              `}
-            >
-              <IconComponent size={16} />
-            </button>
-          );
-        })}
-      </div>
+    <div className={`
+      ${isDark ? 'bg-neutral-800 border-neutral-700' : 'bg-white border-gray-200'}
+      rounded-full shadow-sm border flex items-center px-1.5 py-1.5 
+      min-w-[80px] justify-center gap-1 transition-colors duration-200
+    `}>
+      {themes.map((t) => {
+        const IconComponent = t.icon;
+        const isActive = theme === t.key;
+        
+        return (
+          <button
+            key={t.key}
+            aria-pressed={isActive}
+            onClick={() => handleChange(t.key)}
+            className={`
+              ${isDark 
+                ? `${isActive ? 'bg-neutral-600' : 'hover:text-white'} ` 
+                : `${isActive ? 'bg-gray-200' : 'hover:text-black'} `
+              }
+              border-none rounded-full p-2 cursor-pointer outline-none text-neutral-400
+              flex items-center justify-center
+            `}
+          >
+            <IconComponent size={16} />
+          </button>
+        );
+      })}
     </div>
   );
 }
