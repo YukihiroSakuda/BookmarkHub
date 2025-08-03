@@ -16,7 +16,7 @@ export function SavingOrderOverlay({ isVisible }: SavingOrderOverlayProps) {
           </div>
           <div className="text-center">
             <h3 className="text-lg font-semibold text-black dark:text-white mb-2">
-              Saving YourOrder
+              Saving Your Order
             </h3>
             <p className="text-sm text-neutral-600 dark:text-neutral-400">
               Please wait while we save your custom bookmark order...
