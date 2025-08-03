@@ -13,7 +13,6 @@ export function SavingOrderOverlay({ isVisible }: SavingOrderOverlayProps) {
         <div className="flex flex-col items-center gap-6">
           <div className="relative">
             <Loader2 className="h-12 w-12 animate-spin text-black dark:text-white" />
-            <div className="absolute inset-0 rounded-full blur-md opacity-30 bg-black dark:bg-white" />
           </div>
           <div className="text-center">
             <h3 className="text-lg font-semibold text-black dark:text-white mb-2">
