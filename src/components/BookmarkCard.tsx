@@ -2,7 +2,7 @@ import { BookmarkUI } from '@/types/bookmark';
 import { Trash2, Pin, SquarePen, Globe, GripVertical } from 'lucide-react';
 import { Button } from './Button';
 import { Tag } from './Tag';
-import { useState, memo, useCallback, useMemo } from 'react';
+import { useState, memo, useCallback, useMemo, useRef, useEffect } from 'react';
 import Image from 'next/image';
 
 interface BookmarkCardProps {
@@ -24,6 +24,31 @@ const BookmarkCard = memo(function BookmarkCard({
   onClick,
   isOrderingMode = false
 }: BookmarkCardProps) {
+  const [showTags, setShowTags] = useState(true);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const element = cardRef.current;
+    if (!element || viewMode !== 'list') {
+      setShowTags(true);
+      return;
+    }
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const width = entry.contentRect.width;
+        // カード幅が400px未満の場合はタグを非表示
+        setShowTags(width >= 400);
+      }
+    });
+
+    resizeObserver.observe(element);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [viewMode]);
+
   const getFaviconUrl = useCallback((url: string) => {
     try {
       const urlObj = new URL(url);
@@ -73,6 +98,7 @@ const BookmarkCard = memo(function BookmarkCard({
 
   return (
     <div
+      ref={cardRef}
       className={`backdrop-blur-sm rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-600 shadow-sm ${
         isOrderingMode 
           ? 'cursor-grab active:cursor-grabbing' 
@@ -112,11 +138,18 @@ const BookmarkCard = memo(function BookmarkCard({
               </h3>
             </a>
           )}
-          <div className="flex items-center flex-wrap gap-1.5 overflow-hidden">
-            {sortedTags.map((tag) => (
-              <Tag key={tag} tag={tag} isSelected={true} />
-            ))}
-          </div>
+          {showTags && sortedTags.length > 0 && (
+            <div className="flex items-center flex-wrap gap-1.5 overflow-hidden max-w-[50%] md:max-w-[60%]">
+              {sortedTags.slice(0, sortedTags.length > 3 ? 3 : sortedTags.length).map((tag) => (
+                <Tag key={tag} tag={tag} isSelected={true} />
+              ))}
+              {sortedTags.length > 3 && (
+                <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                  +{sortedTags.length - 3}
+                </span>
+              )}
+            </div>
+          )}
           {!isOrderingMode && (
             <div className="flex items-center justify-end space-x-2">
               <Button
