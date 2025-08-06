@@ -192,7 +192,7 @@ export default function Home() {
         if (tagsError) throw tagsError;
         setAvailableTags(tags);
         setSelectedTags((prev) =>
-          prev.filter((tagId) => tags.some((t) => t.id === tagId))
+          prev.filter((tagName) => tags.some((t) => t.name === tagName))
         );
       } catch (error) {
         console.error("Error updating tags:", error);
